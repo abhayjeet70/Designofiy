@@ -41,8 +41,8 @@ export default function Work() {
     <>
       <PageBanner
         {...pageHeroes.work}
-        eyebrow="Selected Work"
-        title="Projects across Lucknow."
+        eyebrow="Selected work"
+        title={<>Projects across <em>Lucknow</em>.</>}
         lede={`${projects.length} projects, ${shots} photographs, all of it our own work. Filter by what you are building, then click any project to page through it.`}
       />
 

@@ -7,7 +7,7 @@ import { Curtain, PageBanner } from '../components/motion'
 function Faqs() {
   const [open, setOpen] = useState(0)
   return (
-    <section className="section section--alt faqsec">
+    <section className="section section--paper faqsec">
       <div className="faqsec__media">
         <Curtain src={photos.bathroom} alt="Charcoal stone bathroom" ratio="3/4" speed={0.18} />
       </div>
@@ -35,9 +35,9 @@ export default function Services() {
     <>
       <PageBanner
         {...pageHeroes.services}
-        eyebrow="What We Do"
-        title="Eight ways we can take your space on."
-        lede="From a single wardrobe to a full turnkey handover — the same team and the same itemised pricing, whichever you pick."
+        eyebrow="What we do"
+        title={<>Eight ways <em>in</em>.</>}
+        lede="From a single wardrobe to a full turnkey handover. The same team and the same itemised pricing, whichever you pick."
       />
 
       <section className="section section--tight">

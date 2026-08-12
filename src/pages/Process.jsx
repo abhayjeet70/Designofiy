@@ -17,9 +17,9 @@ export default function Process() {
     <>
       <PageBanner
         {...pageHeroes.process}
-        eyebrow="How We Work"
-        title="Six steps, and you know the cost by the fourth."
-        lede="No stage begins before you have signed off on the one before it. Here is exactly what happens, and when."
+        eyebrow="How we work"
+        title={<>Six steps. You know the cost by the <em>fourth</em>.</>}
+        lede="No stage begins before you have signed off on the one before it. Here is what happens, and when."
       />
 
       <section className="section section--tight">

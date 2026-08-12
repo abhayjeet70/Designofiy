@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 
 const reduced = () =>
   typeof window !== 'undefined' &&
@@ -74,42 +74,6 @@ export function Curtain({ src, alt, ratio = '4/5', speed = 0.14, className = '',
   )
 }
 
-/* Counts a number up once it scrolls into view. Non-numeric values pass through. */
-export function CountUp({ value, duration = 1400 }) {
-  const target = parseFloat(value)
-  const decimals = (value.split('.')[1] || '').length
-  const [shown, setShown] = useState(Number.isFinite(target) ? '0' : value)
-  const ref = useRef(null)
-
-  useEffect(() => {
-    const el = ref.current
-    if (!el || !Number.isFinite(target)) return
-    if (reduced()) {
-      setShown(value)
-      return
-    }
-    const io = new IntersectionObserver(
-      ([e]) => {
-        if (!e.isIntersecting) return
-        io.disconnect()
-        const start = performance.now()
-        const tick = (now) => {
-          const t = Math.min((now - start) / duration, 1)
-          const eased = 1 - Math.pow(1 - t, 3)
-          setShown((target * eased).toFixed(decimals))
-          if (t < 1) requestAnimationFrame(tick)
-        }
-        requestAnimationFrame(tick)
-      },
-      { threshold: 0.5 }
-    )
-    io.observe(el)
-    return () => io.disconnect()
-  }, [target, value, decimals, duration])
-
-  return <span ref={ref}>{shown}</span>
-}
-
 /* Full-screen banner for inner routes: a slow push-in plus parallax drift. The
    artwork is light and composed right-of-centre, so copy sits left over clear wall. */
 export function PageBanner({ src, alt, eyebrow, title, lede, children }) {
@@ -126,7 +90,7 @@ export function PageBanner({ src, alt, eyebrow, title, lede, children }) {
         {lede && <p className="lede" data-reveal style={{ '--d': '160ms' }}>{lede}</p>}
         {children}
       </div>
-      <div className="banner__scroll" aria-hidden="true"><span /></div>
+      <div className="banner__scroll" aria-hidden="true">Scroll</div>
     </header>
   )
 }

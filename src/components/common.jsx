@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { business, marquee } from '../data'
+import { business } from '../data'
 
 export const waLink = (text) =>
   `https://wa.me/${business.phone.replace('+', '')}?text=${encodeURIComponent(text)}`
@@ -33,19 +33,6 @@ export function useReveal() {
   })
 }
 
-export function Marquee() {
-  const items = [...marquee, ...marquee]
-  return (
-    <div className="marquee" aria-hidden="true">
-      <div className="marquee__track">
-        {items.map((m, i) => (
-          <span key={i}>{m}<i>✦</i></span>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 export function WhatsAppIcon({ size = 26 }) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} fill="currentColor" aria-hidden="true">
@@ -64,8 +51,7 @@ export function WhatsAppFab() {
       aria-label="Chat with Designofiy on WhatsApp"
       title="Chat on WhatsApp"
     >
-      <WhatsAppIcon size={28} />
-      <span className="fab__pulse" aria-hidden="true" />
+      <WhatsAppIcon size={24} />
     </a>
   )
 }

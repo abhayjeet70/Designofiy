@@ -1,15 +1,15 @@
 import { business, pageHeroes, photos, stats } from '../data'
 import { CtaBand } from '../components/common'
-import { CountUp, Curtain, PageBanner } from '../components/motion'
+import { Curtain, PageBanner } from '../components/motion'
 
 export default function Studio() {
   return (
     <>
       <PageBanner
         {...pageHeroes.studio}
-        eyebrow="The Studio"
-        title="Ten years of practice, one studio in Gomti Nagar."
-        lede="Design and execution under one roof, which means one accountable team instead of a designer pointing at a contractor."
+        eyebrow="The studio"
+        title={<>Ten years of practice, <em>one</em> studio.</>}
+        lede="Design and execution under one roof. One accountable team, rather than a designer pointing at a contractor."
       />
 
       <section className="section section--tight studio">
@@ -46,7 +46,7 @@ export default function Studio() {
       <section className="statband statband--alt" data-stagger>
         {stats.map((s) => (
           <div key={s.label} data-reveal>
-            <strong><CountUp value={s.value} /><span>{s.suffix}</span></strong>
+            <strong>{s.value}<span>{s.suffix}</span></strong>
             <p>{s.label}</p>
           </div>
         ))}
@@ -56,7 +56,7 @@ export default function Studio() {
       <section className="section">
         <div className="section__head" data-reveal>
           <p className="eyebrow">Across the city</p>
-          <h2>A hundred-odd rooms, and counting.</h2>
+          <h2>What we spend our time on.</h2>
         </div>
         <div className="mosaic" data-stagger>
           {[
@@ -75,10 +75,10 @@ export default function Studio() {
         </div>
       </section>
 
-      <section className="section section--alt">
+      <section className="section section--paper">
         <div className="section__head" data-reveal>
-          <p className="eyebrow">On Record</p>
-          <h2>The paperwork, since you will ask.</h2>
+          <p className="eyebrow">On record</p>
+          <h2>Registration details.</h2>
         </div>
         <dl className="records" data-stagger>
           <div data-reveal><dt>Registered name</dt><dd>{business.legalName}</dd></div>

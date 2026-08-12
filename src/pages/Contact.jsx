@@ -26,8 +26,8 @@ export default function Contact() {
     <>
       <PageBanner
         {...pageHeroes.contact}
-        eyebrow="Get In Touch"
-        title="Tell us about the space."
+        eyebrow="Get in touch"
+        title={<>Tell us about the <em>space</em>.</>}
         lede={`Consultations in ${business.city} are on us. Send a few lines about what you are planning and we will come back with a site visit slot.`}
       />
 

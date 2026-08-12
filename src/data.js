@@ -30,14 +30,50 @@ export const photos = {
   salon: '/work/salon.png',
 }
 
-// The hero collage — order matters, it drives the staggered column layout.
-export const collage = [
-  { src: photos.bedroomTerracotta, alt: 'Terracotta panelled bedroom', tag: 'Bedrooms' },
-  { src: photos.wardrobeCorridor, alt: 'Teak and cane wardrobe run', tag: 'Wardrobes' },
-  { src: photos.livingWarm, alt: 'Sand leather living room', tag: 'Living' },
-  { src: photos.kitchen, alt: 'Fluted glass modular kitchen', tag: 'Kitchens' },
-  { src: photos.diningArched, alt: 'Arched crockery unit and marble dining table', tag: 'Dining' },
-  { src: photos.bathroom, alt: 'Charcoal stone bathroom', tag: 'Bathrooms' },
+// The hero runs as a sequence: the backdrop holds, while the photograph and the
+// headline advance together. `lead` is set in the serif italic accent face.
+// Keep lines short — they are set at display size and must not wrap awkwardly.
+export const heroSequence = [
+  {
+    tag: 'Living',
+    src: photos.livingWarm,
+    alt: 'Sand leather living room with framed art and a warm pendant',
+    lines: ['Interiors with', 'a sense of', '<em>permanence</em>'],
+    sub: 'Sand leather, hand-knotted wool and a single warm pendant. Rooms composed to hold their quality for a decade, not a season.',
+    to: '/work',
+  },
+  {
+    tag: 'Kitchens',
+    src: photos.kitchen,
+    alt: 'Handleless modular kitchen with fluted glass wall units',
+    lines: ['Kitchens made', 'for the way', 'you <em>cook</em>'],
+    sub: 'Fluted glass lit from within, quartz run full width, and drawer stacks where lesser kitchens put shutters.',
+    to: '/services#modular',
+  },
+  {
+    tag: 'Wardrobes',
+    src: photos.wardrobeCorridor,
+    alt: 'Teak and cane wardrobe run over a herringbone floor',
+    lines: ['Joinery that', 'earns its', '<em>keep</em>'],
+    sub: 'Teak frames, cane-textured panels, and interiors planned to the centimetre before a single shutter was drawn.',
+    to: '/services#wardrobes',
+  },
+  {
+    tag: 'Dining',
+    src: photos.diningArched,
+    alt: 'Marble dining table beside an arched glass crockery unit',
+    lines: ['The table', 'everything', '<em>gathers</em> around'],
+    sub: 'Marble on a fluted timber base, arched crockery units lit from behind glass, and seating in two complementary weaves.',
+    to: '/work',
+  },
+  {
+    tag: 'Bathrooms',
+    src: photos.bathroom,
+    alt: 'Charcoal stone bathroom with a round backlit mirror',
+    lines: ['Stone, light', 'and quiet', '<em>restraint</em>'],
+    sub: 'Full-height charcoal stone, a honed black counter, concealed services and a mirror lit at exactly face height.',
+    to: '/services#bathrooms',
+  },
 ]
 
 // Styled flatlays for the full-screen page banners. All are light, warm and composed
