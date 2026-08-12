@@ -1,6 +1,7 @@
 import { pageHeroes, photos, process } from '../data'
 import { CtaBand } from '../components/common'
 import { Curtain, PageBanner } from '../components/motion'
+import SlideUpText from '../components/SlideUpText'
 
 // One photograph per step, so the timeline reads as work rather than a list.
 const STEP_IMAGES = [
@@ -35,7 +36,10 @@ export default function Process() {
               />
               <div className="steps__body">
                 <span className="steps__num" data-reveal>{p.step}</span>
-                <h2 data-reveal style={{ '--d': '70ms' }}>{p.title}</h2>
+                <h2 data-reveal style={{ '--d': '70ms' }}>
+                  <SlideUpText split="words" stagger={0.06} inView once>{p.title}</SlideUpText>
+                </h2>
+
                 <p data-reveal style={{ '--d': '140ms' }}>{p.body}</p>
               </div>
             </li>
@@ -46,7 +50,8 @@ export default function Process() {
       <section className="section section--alt">
         <div className="section__head" data-reveal>
           <p className="eyebrow">Typical Timelines</p>
-          <h2>How long it usually takes.</h2>
+          <h2><SlideUpText split="words" stagger={0.07} inView once>How long it usually takes.</SlideUpText></h2>
+
           <p className="lede">
             Measured from design sign-off. Civil work and fully custom furniture are the two
             things that move these numbers.

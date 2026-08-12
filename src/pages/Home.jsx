@@ -4,8 +4,45 @@ import {
   business, heroSequence, photos, projects, ribbon, services, stats, testimonials,
 } from '../data'
 import { Curtain, useParallax } from '../components/motion'
+import AsciiCanvas from '../components/AsciiCanvas'
+import SlideUpText from '../components/SlideUpText'
 
-const HOLD = 6000 // ms each slide holds before advancing
+const ASCII_PARAMS = {
+  renderMode: 'dither',
+  bgMode: 'none',
+  bgBlur: 12,
+  bgOpacity: 90,
+  cellSize: 9,
+  coverage: 100,
+  invert: false,
+  brightness: 0,
+  contrast: 158,
+  density: 20,
+  tint: '#3ca6ff',
+  tintOpacity: 0,
+  overlayBlend: 'multiply',
+  saturation: 100,
+  grayscale: 0,
+  animated: true,
+  animStyle: 'pulse',
+  animSpeed: { enabled: true, intensity: 100 },
+  animIntensity: { enabled: true, intensity: 60 },
+  pfx: {
+    vignette: { enabled: false, intensity: 38 },
+    scanLines: { enabled: false, intensity: 40 },
+    chromatic: { enabled: false, intensity: 15 },
+    bloom: { enabled: false, intensity: 25 },
+    filmGrain: { enabled: false, intensity: 30 },
+    glitch: { enabled: false, intensity: 20 },
+    pixelate: { enabled: false, intensity: 15 },
+    halftone: { enabled: false, intensity: 20 },
+    filmDust: { enabled: false, intensity: 20 },
+  },
+  lights: { enabled: false, points: [] },
+  mask: { enabled: false, invert: false, dataUrl: null },
+}
+
+const HOLD = 3600 // ms each slide holds before advancing
 
 /* The backdrop holds still while the photograph and the headline advance together.
    Autoplay pauses on hover/focus and never starts under prefers-reduced-motion. */
@@ -34,12 +71,9 @@ function Hero() {
       onFocusCapture={() => setPaused(true)}
       onBlurCapture={() => setPaused(false)}
     >
-      <div
-        ref={bg}
-        className="hero__bg"
-        style={{ backgroundImage: `url(${photos.heroBg})` }}
-        aria-hidden="true"
-      />
+      <div ref={bg} className="hero__bg" aria-hidden="true">
+        <AsciiCanvas src={photos.heroBg} params={ASCII_PARAMS} />
+      </div>
       <div className="hero__veil" aria-hidden="true" />
 
       <div className="hero__copy">
@@ -47,15 +81,18 @@ function Hero() {
           Interior architecture &amp; turnkey execution · Lucknow, since 2022
         </p>
 
-        {/* key remounts the block so the line-by-line mask animation replays */}
+        {/* key remounts so slide-up replays on each slide change */}
         <h1 key={`h${i}`} className="hero__head">
           {slide.lines.map((line, n) => (
             <span className="mask" key={n}>
-              <span
-                className="mask__in"
+              <SlideUpText
+                split="words"
+                delay={n * 0.09}
+                stagger={0.07}
                 style={{ '--d': `${n * 90}ms` }}
-                dangerouslySetInnerHTML={{ __html: line }}
-              />
+              >
+                {line.replace(/<[^>]+>/g, '')}
+              </SlideUpText>
             </span>
           ))}
         </h1>
@@ -121,7 +158,12 @@ function Spotlight() {
       <Curtain src={p.images[0]} alt={p.title} ratio="4/5" className="spotlight__media" />
       <div className="spotlight__body">
         <p className="eyebrow" data-reveal>Project in focus</p>
-        <h2 data-reveal style={{ '--d': '80ms' }}>{p.title}</h2>
+        <h2 data-reveal style={{ '--d': '80ms' }}>
+          <SlideUpText split="words" stagger={0.07} inView once>
+            {p.title}
+          </SlideUpText>
+        </h2>
+
         <p data-reveal style={{ '--d': '150ms' }}>{p.note}</p>
         <div className="spotlight__thumbs" data-stagger>
           {p.images.slice(1).map((img) => (
@@ -141,7 +183,12 @@ function FeaturedWork() {
       <div className="section__head section__head--row" data-reveal>
         <div>
           <p className="eyebrow">Selected work</p>
-          <h2>Nine commissions, across the city.</h2>
+          <h2>
+            <SlideUpText split="words" stagger={0.07} inView once>
+              Nine commissions, across the city.
+            </SlideUpText>
+          </h2>
+
         </div>
         <Link className="link" to="/work">All projects</Link>
       </div>
@@ -167,8 +214,11 @@ function Detail() {
       <div className="detail__text">
         <p className="eyebrow" data-reveal>Inside the joinery</p>
         <h2 data-reveal style={{ '--d': '80ms' }}>
-          The <em>interior</em> of the interior.
+          <SlideUpText split="words" stagger={0.07} inView once>
+            The interior of the interior.
+          </SlideUpText>
         </h2>
+
         <p data-reveal style={{ '--d': '150ms' }}>
           Anyone can photograph a closed shutter. We resolve what sits behind it first:
           hanging heights, drawer depths, a pull-down rail for the top tier, and a lit
@@ -208,7 +258,12 @@ function ServicesTeaser() {
       <div className="section__head section__head--row" data-reveal>
         <div>
           <p className="eyebrow">Disciplines</p>
-          <h2>Eight ways in.</h2>
+          <h2>
+            <SlideUpText split="words" stagger={0.07} inView once>
+              Eight ways in.
+            </SlideUpText>
+          </h2>
+
         </div>
         <Link className="link" to="/services">All services</Link>
       </div>
@@ -234,7 +289,12 @@ function Quotes() {
       </div>
       <div className="quotesec__body">
         <p className="eyebrow" data-reveal>Clients</p>
-        <h2 data-reveal style={{ '--d': '80ms' }}>Said after handover.</h2>
+        <h2 data-reveal style={{ '--d': '80ms' }}>
+          <SlideUpText split="words" stagger={0.07} inView once>
+            Said after handover.
+          </SlideUpText>
+        </h2>
+
         <div className="quotes" data-stagger>
           {testimonials.map((t) => (
             <figure key={t.name} data-reveal>
@@ -254,9 +314,14 @@ function Quotes() {
 function Invite() {
   return (
     <section className="band band--photo">
-      <img className="band__bg" src={photos.livingRug} alt="" aria-hidden="true" />
+      <AsciiCanvas src={photos.livingRug} params={ASCII_PARAMS} />
       <div className="band__inner">
-        <h2 data-reveal>Tell us about the space.</h2>
+        <h2 data-reveal>
+          <SlideUpText split="words" stagger={0.08} inView once>
+            Tell us about the space.
+          </SlideUpText>
+        </h2>
+
         <p data-reveal style={{ '--d': '80ms' }}>
           Consultations in {business.city} are on us. Send a few lines about what you are
           planning and we will come back with a site visit slot.

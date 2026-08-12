@@ -229,6 +229,8 @@ h1 em, h2 em { font-size: 1.06em; }
   .curtain img { transform: none; transition: none; }
   .curtain__panel { display: none; }
   .ribbon__track, .hero__media img, .banner__media img { animation: none !important; }
+  /* SlideUpText: jump to final state instantly */
+  .sut-wrap * { transition: none !important; }
   * { scroll-behavior: auto !important; }
 }
 
@@ -248,9 +250,10 @@ h1 em, h2 em { font-size: 1.06em; }
 }
 .hero__bg {
   position: absolute; inset: -6% 0;
-  background: var(--ink) left bottom / cover no-repeat;
+  background: var(--ink);
   transform: translateY(var(--py, 0));
   animation: bgin 2.4s var(--ease) both;
+  overflow: hidden;
 }
 @keyframes bgin { from { opacity: 0; scale: 1.06 } to { opacity: 1; scale: 1 } }
 /* Deliberately light. The backdrop photograph is already dark, so legibility comes
@@ -262,8 +265,10 @@ h1 em, h2 em { font-size: 1.06em; }
     linear-gradient(to top, rgba(10,10,10,.5), transparent 32%);
 }
 
+/* Copy holds 5 columns, the photograph takes the remaining 7 from column 6 —
+   the text block and the image sit adjacent rather than either side of a void. */
 .hero__copy {
-  grid-column: 1 / span 6; grid-row: 1;
+  grid-column: 1 / span 5; grid-row: 1;
   position: relative; z-index: 2;
   align-self: center; min-width: 0;
   text-shadow: 0 2px 28px rgba(8, 7, 5, 0.62);
@@ -275,17 +280,17 @@ h1 em, h2 em { font-size: 1.06em; }
 }
 .hero__head {
   /* min() against 9.2svh keeps three lines inside the fold on short windows */
-  font-size: clamp(2.25rem, min(6vw, 9.2svh), 5.25rem);
+  font-size: clamp(2.25rem, min(5.5vw, 9svh), 5rem);
   line-height: 0.94; letter-spacing: -0.035em;
   display: grid; margin-bottom: var(--s-4);
 }
-/* Each line rises out from behind its own clipping box. */
+/* Each line clips the SlideUpText span as it rises — keeps the hero typographic rhythm. */
 .mask { display: block; overflow: hidden; padding-bottom: 0.06em; }
-.mask__in { display: block; animation: rise 1s var(--ease) both; animation-delay: var(--d, 0ms); }
-@keyframes rise { from { transform: translateY(105%) } }
+/* sut-wrap: inline-flex container emitted by SlideUpText; inherits type styles from parent */
+.sut-wrap { font: inherit; letter-spacing: inherit; line-height: inherit; color: inherit; }
 
 .hero__sub {
-  max-width: 42ch; min-height: 3lh;
+  max-width: 38ch; min-height: 3lh;
   font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.0625rem);
   color: color-mix(in srgb, var(--paper) 70%, transparent);
   animation: fadeup 0.9s var(--ease) 0.35s both;
@@ -294,16 +299,16 @@ h1 em, h2 em { font-size: 1.06em; }
 .hero__cta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-4); }
 
 .hero__media {
-  grid-column: 8 / -1; grid-row: 1;
+  grid-column: 6 / -1; grid-row: 1;
   position: relative; margin: 0; z-index: 2;
   align-self: center;
-  width: 100%; height: min(58svh, 34rem);
+  width: 100%; height: min(62svh, 36rem);
   overflow: hidden;
 }
 .hero__media img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0; transform: scale(1.06);
-  transition: opacity 1.2s var(--ease), transform 7s linear;
+  opacity: 0; transform: scale(1.05);
+  transition: opacity 0.6s var(--ease), transform 4s linear;
 }
 .hero__media img.is-active { opacity: 1; transform: scale(1); }
 
@@ -328,8 +333,7 @@ h1 em, h2 em { font-size: 1.06em; }
 @keyframes fill { from { transform: scaleX(0) } to { transform: scaleX(1) } }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero__bg, .mask__in, .hero__sub, .hero__ticker button.is-active .hero__tick i { animation: none; }
-  .mask__in { transform: none; }
+  .hero__bg, .hero__sub, .hero__ticker button.is-active .hero__tick i { animation: none; }
   .hero__media img { transition: opacity 0.2s; }
 }
 
@@ -613,8 +617,8 @@ h1 em, h2 em { font-size: 1.06em; }
 .band { position: relative; padding: var(--sec-large) var(--margin); background: var(--ink-2); overflow: hidden; }
 .band--photo { background: var(--ink); }
 .band__bg { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.22; }
-.band--photo::after { content: ''; position: absolute; inset: 0; background: linear-gradient(88deg, rgba(10,10,10,.85), rgba(10,10,10,.4)); }
-.band__inner { position: relative; z-index: 1; max-width: var(--max-w-narrow); }
+.band--photo::after { content: ''; position: absolute; inset: 0; z-index: 1; background: linear-gradient(88deg, rgba(10,10,10,.82), rgba(10,10,10,.38)); }
+.band__inner { position: relative; z-index: 2; max-width: var(--max-w-narrow); }
 .band h2 { margin-bottom: var(--s-4); }
 .band p { color: color-mix(in srgb, var(--paper) 70%, transparent); max-width: 46ch; }
 .band__cta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-5); }

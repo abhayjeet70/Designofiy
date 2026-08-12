@@ -1,6 +1,7 @@
 import { business, pageHeroes, photos, stats } from '../data'
 import { CtaBand } from '../components/common'
 import { Curtain, PageBanner } from '../components/motion'
+import SlideUpText from '../components/SlideUpText'
 
 export default function Studio() {
   return (
@@ -56,7 +57,8 @@ export default function Studio() {
       <section className="section">
         <div className="section__head" data-reveal>
           <p className="eyebrow">Across the city</p>
-          <h2>What we spend our time on.</h2>
+          <h2><SlideUpText split="words" stagger={0.07} inView once>What we spend our time on.</SlideUpText></h2>
+
         </div>
         <div className="mosaic" data-stagger>
           {[
@@ -78,7 +80,8 @@ export default function Studio() {
       <section className="section section--paper">
         <div className="section__head" data-reveal>
           <p className="eyebrow">On record</p>
-          <h2>Registration details.</h2>
+          <h2><SlideUpText split="words" stagger={0.07} inView once>Registration details.</SlideUpText></h2>
+
         </div>
         <dl className="records" data-stagger>
           <div data-reveal><dt>Registered name</dt><dd>{business.legalName}</dd></div>

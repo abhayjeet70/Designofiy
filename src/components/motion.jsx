@@ -1,4 +1,6 @@
 import { useEffect, useRef } from 'react'
+import AsciiCanvas from './AsciiCanvas'
+import SlideUpText from './SlideUpText'
 
 const reduced = () =>
   typeof window !== 'undefined' &&
@@ -74,19 +76,54 @@ export function Curtain({ src, alt, ratio = '4/5', speed = 0.14, className = '',
   )
 }
 
+const BANNER_PARAMS = {
+  renderMode: 'dither',
+  bgMode: 'none',
+  cellSize: 9,
+  coverage: 100,
+  invert: false,
+  brightness: 0,
+  contrast: 158,
+  density: 20,
+  tintOpacity: 0,
+  saturation: 100,
+  grayscale: 0,
+  animated: true,
+  animStyle: 'pulse',
+  animSpeed: { enabled: true, intensity: 100 },
+  animIntensity: { enabled: true, intensity: 60 },
+  pfx: {
+    vignette: { enabled: false, intensity: 38 },
+    scanLines: { enabled: false, intensity: 40 },
+    bloom: { enabled: false, intensity: 25 },
+    filmGrain: { enabled: false, intensity: 30 },
+    glitch: { enabled: false, intensity: 20 },
+    pixelate: { enabled: false, intensity: 15 },
+    halftone: { enabled: false, intensity: 20 },
+    chromatic: { enabled: false, intensity: 15 },
+    filmDust: { enabled: false, intensity: 20 },
+  },
+  lights: { enabled: false, points: [] },
+  mask: { enabled: false, invert: false, dataUrl: null },
+}
+
 /* Full-screen banner for inner routes: a slow push-in plus parallax drift. The
    artwork is light and composed right-of-centre, so copy sits left over clear wall. */
 export function PageBanner({ src, alt, eyebrow, title, lede, children }) {
   const ref = useParallax(0.1)
   return (
     <header className="banner">
-      <div className="banner__media">
-        <img ref={ref} src={src} alt={alt} fetchPriority="high" />
+      <div className="banner__media" ref={ref}>
+        <AsciiCanvas src={src} params={BANNER_PARAMS} />
       </div>
       <div className="banner__scrim" aria-hidden="true" />
       <div className="banner__inner">
         <p className="eyebrow" data-reveal>{eyebrow}</p>
-        <h1 data-reveal style={{ '--d': '80ms' }}>{title}</h1>
+        <h1 data-reveal style={{ '--d': '80ms' }}>
+          {typeof title === 'string'
+            ? <SlideUpText split="words" stagger={0.09} delay={0.1}>{title}</SlideUpText>
+            : title}
+        </h1>
         {lede && <p className="lede" data-reveal style={{ '--d': '160ms' }}>{lede}</p>}
         {children}
       </div>

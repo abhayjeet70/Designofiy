@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { faqs, pageHeroes, photos, services } from '../data'
 import { CtaBand } from '../components/common'
 import { Curtain, PageBanner } from '../components/motion'
+import SlideUpText from '../components/SlideUpText'
 
 function Faqs() {
   const [open, setOpen] = useState(0)
@@ -13,7 +14,12 @@ function Faqs() {
       </div>
       <div className="faqsec__body">
         <p className="eyebrow" data-reveal>Questions</p>
-        <h2 data-reveal style={{ '--d': '80ms' }}>The things everybody asks first.</h2>
+        <h2 data-reveal style={{ '--d': '80ms' }}>
+          <SlideUpText split="words" stagger={0.07} inView once>
+            The things everybody asks first.
+          </SlideUpText>
+        </h2>
+
         <div className="faq" data-reveal style={{ '--d': '160ms' }}>
           {faqs.map((f, i) => (
             <div className={`faq__item ${open === i ? 'is-open' : ''}`} key={f.q}>
@@ -53,7 +59,10 @@ export default function Services() {
               />
               <div className="svcrow__body">
                 <span className="svcrow__idx" data-reveal>{String(i + 1).padStart(2, '0')}</span>
-                <h2 data-reveal style={{ '--d': '70ms' }}>{s.title}</h2>
+        <h2 data-reveal style={{ '--d': '70ms' }}>
+          <SlideUpText split="words" stagger={0.06} inView once>{s.title}</SlideUpText>
+        </h2>
+
                 <p data-reveal style={{ '--d': '140ms' }}>{s.blurb}</p>
                 <ul data-stagger>
                   {s.points.map((pt) => <li key={pt} data-reveal>{pt}</li>)}
