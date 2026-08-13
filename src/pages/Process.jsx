@@ -69,6 +69,7 @@ export default function Process() {
         title="Ready for step one?"
         body="Step one is a conversation, and it costs nothing. Tell us about the space and we will take it from there."
         cta="Start the conversation"
+        image={photos.bedroomTerracotta}
       />
     </>
   )

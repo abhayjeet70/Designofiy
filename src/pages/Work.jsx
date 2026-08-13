@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { pageHeroes, projects } from '../data'
-import { CtaBand } from '../components/common'
+import { pageHeroes, photos, projects } from '../data'
+import { CtaBand, useReveal } from '../components/common'
 import { PageBanner } from '../components/motion'
 
 export default function Work() {
@@ -13,6 +13,10 @@ export default function Work() {
   const [frame, setFrame] = useState(0)    // index within that project's images
 
   const shown = active === 'All' ? projects : projects.filter((p) => p.category === active)
+
+  // The grid is keyed on `active`, so changing the filter mounts a fresh set of
+  // [data-reveal] cards that Layout's observer never sees. Re-scan for them.
+  useReveal([active])
 
   const show = (p) => { setOpen(p); setFrame(0) }
   const step = useCallback(
@@ -43,7 +47,7 @@ export default function Work() {
         {...pageHeroes.work}
         eyebrow="Selected work"
         title={<>Projects across <em>Lucknow</em>.</>}
-        lede={`${projects.length} projects, ${shots} photographs, all of it our own work. Filter by what you are building, then click any project to page through it.`}
+        lede={`${projects.length} projects, ${shots} photographs. Filter by what you are building, then click any project to page through it.`}
       />
 
       <section className="section section--tight">
@@ -85,6 +89,8 @@ export default function Work() {
       <CtaBand
         title="Want something like this?"
         body="Send us the floor plan, or just the address. We will come measure and tell you honestly what it takes."
+        image={photos.livingWide}
+        imageAlt=""
       />
 
       {open && (

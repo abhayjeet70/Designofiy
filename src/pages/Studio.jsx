@@ -97,6 +97,7 @@ export default function Studio() {
         title="Come see a site."
         body="The fastest way to judge a studio is to stand in something it built. Ask us and we will arrange a visit."
         cta="Arrange a visit"
+        image={photos.livingRug}
       />
     </>
   )

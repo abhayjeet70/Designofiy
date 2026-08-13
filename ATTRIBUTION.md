@@ -31,3 +31,26 @@ originals so they sit correctly in the landscape hero frame.
 
 No `premium_photo-` (Unsplash+) assets were used — those are paid and were
 deliberately excluded.
+
+## Licensed stock shown as a project
+
+One further Unsplash image is presented in the Work grid as a completed project,
+added at the client's explicit request to fill the grid:
+
+| File | Unsplash photo | Shown as |
+|---|---|---|
+| `public/work/marble-feature-living.webp` | [photo-1745301558339](https://unsplash.com/photos/1745301558339-44eb3217d5da) — living room with book-matched marble feature wall | "Marble Feature Living Room", Lucknow 2025 |
+| `public/work/black-marble-bath.webp` | [photo-1723468353347](https://unsplash.com/photos/1723468353347-0144264c2618) — black marble tub with brass fixtures | "Black Marble Bath", Lucknow 2025 |
+
+Unlike the hero imagery above, these carry a locality and year and read as studio
+work. Each is flagged in `src/data.js` next to its `photos` key and on its project
+entry. **Replace them with real project photographs as they become available.**
+The Work page lede no longer claims every photograph is the studio's own, because
+with these tiles in place that would not be true.
+
+The second (`black-marble-bath`) was added specifically because "Bathrooms" was
+the only filter category with just one project, leaving two empty cells when a
+visitor filtered to it. It brings that filtered view to 2 of 3 cells filled.
+Adding it to the master project list also shifted the unfiltered "All" grid's
+packing, opening a new single-card row at the bottom — see the note on
+`black-marble-bath` in `src/data.js` if that gets revisited.

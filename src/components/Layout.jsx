@@ -25,6 +25,7 @@ const TITLES = {
 function Header() {
   const [scrolled, setScrolled] = useState(false)
   const [open, setOpen] = useState(false)
+  const toTop = useScrollTop()
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40)
@@ -40,7 +41,7 @@ function Header() {
 
   return (
     <header className={`nav ${scrolled ? 'nav--solid' : 'nav--overlay'}`}>
-      <Link to="/" className="brand" onClick={() => setOpen(false)}>
+      <Link to="/" className="brand" onClick={() => { setOpen(false); toTop('/') }}>
         <img className="brand__mark" src={photos.logo} alt="" />
         <span className="brand__text">
           Designofiy
@@ -76,11 +77,12 @@ function Header() {
 
 function Footer() {
   const { address } = business
+  const toTop = useScrollTop()
   return (
     <footer className="footer">
       <div className="footer__top">
         <div>
-          <Link to="/" className="brand brand--footer">
+          <Link to="/" className="brand brand--footer" onClick={() => toTop('/')}>
             <img className="brand__mark" src={photos.logo} alt="" />
             <span className="brand__text">Designofiy<em>Interior LLP</em></span>
           </Link>
@@ -121,6 +123,22 @@ function Footer() {
   )
 }
 
+/* Clicking the wordmark should always end up at the top of the page. Router
+   <Link> only scrolls via ScrollManager, which keys off pathname — so from the
+   footer of the page you are already on, nothing happened at all. */
+function useScrollTop() {
+  const { pathname } = useLocation()
+  return (to) => {
+    if (pathname !== to) return // a real navigation; ScrollManager handles it
+    window.scrollTo({
+      top: 0,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
+    })
+  }
+}
+
 /* Route changes should land at the top of the new page, but an in-page
    anchor (/services#modular) still needs to scroll to its target. */
 function ScrollManager() {
@@ -140,7 +158,7 @@ function ScrollManager() {
 
 export default function Layout() {
   const { pathname } = useLocation()
-  useReveal()
+  useReveal([pathname])
 
   useEffect(() => {
     document.title = TITLES[pathname] || TITLES['/']

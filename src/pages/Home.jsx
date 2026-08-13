@@ -183,6 +183,7 @@ function Spotlight() {
 
 function FeaturedWork() {
   const featured = projects.filter((p) => p.featured)
+  let currentColumn = 0;
   return (
     <section className="section">
       <div className="section__head section__head--row" data-reveal>
@@ -198,16 +199,23 @@ function FeaturedWork() {
         <Link className="link" to="/work">All projects</Link>
       </div>
       <div className="grid" data-stagger>
-        {featured.map((p) => (
-          <Link key={p.slug} to="/work" className={`card card--${p.span || 'std'}`} data-reveal>
-            <img src={p.images[0]} alt={p.title} loading="lazy" />
-            <div className="card__body">
-              <span className="chip">{p.category}</span>
-              <h3>{p.title}</h3>
-              <p>{p.location} · {p.year}{p.images.length > 1 && ` · ${p.images.length} photos`}</p>
-            </div>
-          </Link>
-        ))}
+        {featured.map((p) => {
+          let span = p.span === 'wide' ? 2 : 1;
+          let direction = 'bottom';
+          if (currentColumn === 0) direction = 'left';
+          else if (currentColumn === 2 || (currentColumn === 1 && span === 2)) direction = 'right';
+          currentColumn = (currentColumn + span) % 3;
+          return (
+            <Link key={p.slug} to="/work" className={`card card--${p.span || 'std'}`} data-reveal={direction}>
+              <img src={p.images[0]} alt={p.title} loading="lazy" />
+              <div className="card__body">
+                <span className="chip">{p.category}</span>
+                <h3>{p.title}</h3>
+                <p>{p.location} · {p.year}{p.images.length > 1 && ` · ${p.images.length} photos`}</p>
+              </div>
+            </Link>
+          )
+        })}
       </div>
     </section>
   )

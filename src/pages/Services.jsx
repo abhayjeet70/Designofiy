@@ -80,6 +80,7 @@ export default function Services() {
         title="Not sure which one you need?"
         body="Describe the space in a sentence or two. We will tell you what it actually needs, even if that is less than you asked for."
         cta="Ask us"
+        image={photos.diningOpen}
       />
     </>
   )

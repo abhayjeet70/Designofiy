@@ -5,9 +5,14 @@ import { business } from '../data'
 export const waLink = (text) =>
   `https://wa.me/${business.phone.replace('+', '')}?text=${encodeURIComponent(text)}`
 
-/* Adds .in when an element scrolls into view. Re-runs on every render so newly
-   mounted nodes (e.g. after a route change or a gallery filter) get observed too. */
-export function useReveal() {
+/* Adds .in when an element scrolls into view.
+   Pass the values that change the DOM you want observed — the route for the
+   shell, the active filter for a gallery. This used to run after *every* render
+   with no dependency array, which was both wasteful (a full-document
+   querySelectorAll each time) and wrong: a component re-rendering on its own
+   state, like Work's category filter, never re-renders Layout, so freshly
+   mounted cards were never observed and stayed at opacity 0 forever. */
+export function useReveal(deps = []) {
   useEffect(() => {
     const io = new IntersectionObserver(
       (entries) => {
@@ -30,7 +35,8 @@ export function useReveal() {
       io.observe(el)
     })
     return () => io.disconnect()
-  })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, deps)
 }
 
 export function WhatsAppIcon({ size = 26 }) {
@@ -56,10 +62,14 @@ export function WhatsAppFab() {
   )
 }
 
-/* Bottom-of-page conversion block, shared by every inner route. */
-export function CtaBand({ title, body, cta = 'Book a consultation' }) {
+/* Bottom-of-page conversion block, shared by every inner route.
+   `image` gives the band a photographic ground; the .band--photo scrim keeps the
+   copy legible over it. Home does not use this component — its closing band runs
+   the ASCII canvas instead. */
+export function CtaBand({ title, body, cta = 'Book a consultation', image, imageAlt = '' }) {
   return (
-    <section className="band" data-reveal>
+    <section className={`band ${image ? 'band--photo' : ''}`} data-reveal>
+      {image && <img className="band__bg" src={image} alt={imageAlt} loading="lazy" />}
       <div className="band__inner">
         <h2>{title}</h2>
         <p>{body}</p>

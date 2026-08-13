@@ -6,8 +6,10 @@
 //   MCA/Tofler - LLPIN ABB-0142, incorporated 14 May 2022
 //   GST        - 09AATFD7640L1ZP (Uttar Pradesh)
 //
-// PHOTOS: all photography in /public/work/ is the studio's own. Project titles,
-// localities and years below are placeholder labels - confirm them with the studio.
+// PHOTOS: photography in /public/work/ is the studio's own, with ONE exception -
+// marble-feature-living.webp is licensed stock (see ATTRIBUTION.md) presented as a
+// project at the client's request. Project titles, localities and years below are
+// placeholder labels - confirm them with the studio.
 
 // Editorial photography for the home hero and the two ASCII backdrops only.
 // These are licensed stock (Unsplash, free for commercial use — see ATTRIBUTION.md),
@@ -22,6 +24,9 @@ export const heroStock = {
   dining: '/hero/stock-dining.webp',
   bathroom: '/hero/stock-bathroom.webp',
   invite: '/hero/stock-invite.webp',
+  // Charred-timber texture for the Work grid's closing CTA tile. Deliberately a
+  // material rather than a room, so it cannot be mistaken for a project photo.
+  ctaTile: '/hero/cta-texture.webp',
 }
 
 export const photos = {
@@ -43,6 +48,11 @@ export const photos = {
   bathroom: '/work/bathroom-grey.webp',
   partition: '/work/partition-unit.webp',
   salon: '/work/salon.webp',
+  // Licensed stock, NOT studio work — see the note above and ATTRIBUTION.md.
+  marbleFeature: '/work/marble-feature-living.webp',
+  // Licensed stock, NOT studio work — see the note above and ATTRIBUTION.md.
+  blackMarbleBath: '/work/black-marble-bath.webp',
+  spaStoneBath: '/work/spa-stone-bath.webp',
 }
 
 // The hero runs as a sequence: the backdrop holds, while the photograph and the
@@ -299,6 +309,38 @@ export const projects = [
     featured: true,
   },
   {
+    slug: 'minimalist-ambient-living',
+    title: 'Minimalist Ambient Living',
+    category: 'Residential',
+    location: 'Lucknow',
+    year: '2025',
+    note: 'A minimal living space bathed in natural light, featuring warm wooden textures, neutral upholstery, and subtle ambient lighting for a calm, serene environment.',
+    images: ['https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'],
+    span: 'wide',
+    featured: true,
+  },
+  {
+    slug: 'black-marble-bath',
+    title: 'Black Marble Bath',
+    category: 'Bathrooms',
+    location: 'Lucknow',
+    year: '2025',
+    note: 'A book-matched black marble bath surround with a deep soaking tub, brass fixtures and a wall-mounted vanity mirror set into the stone.',
+    // NOTE: licensed stock photography, not a delivered project — added at the
+    // client's request so the Bathrooms filter is not left with an empty grid
+    // cell. Swap `images` for a real project photo when one is available.
+    images: [photos.blackMarbleBath],
+  },
+  {
+    slug: 'spa-stone-bathroom',
+    title: 'Spa Stone Bathroom',
+    category: 'Bathrooms',
+    location: 'Lucknow',
+    year: '2025',
+    note: 'Warm stone walls, a freestanding tub and a walk-in rain shower behind a frameless glass screen.',
+    images: [photos.spaStoneBath],
+  },
+  {
     slug: 'ivory-teak-bedroom',
     title: 'Ivory & Teak Bedroom',
     category: 'Residential',
@@ -325,6 +367,18 @@ export const projects = [
     note: 'Full-height olive shutter walls, backlit mirror stations at face level so colour work reads true, tan leather chairs and a dome pendant over the styling floor.',
     images: [photos.salon],
     span: 'wide',
+  },
+  {
+    slug: 'marble-feature-living-room',
+    title: 'Marble Feature Living Room',
+    category: 'Residential',
+    location: 'Lucknow',
+    year: '2025',
+    note: 'A book-matched marble feature wall behind a channel-tufted sofa, fluted timber returns, a carved jaali screen to the entry and brass nesting tables on a marble floor.',
+    // NOTE: licensed stock photography, not a delivered project. Added at the
+    // client's request to fill the grid. Swap `images` for a real project photo
+    // when one is available.
+    images: [photos.marbleFeature],
   },
 ]
 

@@ -213,9 +213,18 @@ h1 em, h2 em { font-size: 1.06em; }
 
 /* ---------- reveals: one move, a rise; images get a wipe ---------- */
 [data-reveal] {
-  opacity: 0; transform: translateY(18px);
+  opacity: 0;
   transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
   transition-delay: var(--d, 0ms);
+}
+[data-reveal]:not([data-reveal="left"]):not([data-reveal="right"]) {
+  transform: translateY(18px);
+}
+[data-reveal="left"] {
+  transform: translateX(-40px);
+}
+[data-reveal="right"] {
+  transform: translateX(40px);
 }
 [data-reveal].in { opacity: 1; transform: none; }
 
@@ -455,15 +464,34 @@ h1 em, h2 em { font-size: 1.06em; }
 
 .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
 .card {
-  position: relative; display: block; overflow: hidden;
+  position: relative; display: flex; flex-direction: column; overflow: hidden;
   padding: 0; border: 0; background: none; text-align: left; color: inherit;
+  height: 100%;
 }
-.card > img { width: 100%; aspect-ratio: 4/5; object-fit: cover; transition: transform 1.1s var(--ease); }
+.card > img { width: 100%; flex-grow: 1; min-height: 0; aspect-ratio: 4/5; object-fit: cover; transition: transform 1.1s var(--ease); }
 .card--tall > img { aspect-ratio: 3/5.4; }
 .card--wide { grid-column: span 2; }
 .card--wide > img { aspect-ratio: 16/9; }
 .card:hover > img, .card:focus-visible > img { transform: scale(1.03); }
-.card__body { padding: var(--s-4) 0 0; }
+/* Closing tile in the Work grid. Nine projects across three columns leaves the
+   bottom-right cell empty, because the last card spans two columns and wraps.
+   This fills it with an invitation rather than padding the portfolio out with a
+   stock photo. Copy sits *over* the image, unlike project cards where it sits
+   below, so it never reads as another project. */
+.card--cta { position: relative; display: block; }
+.card--cta > img { aspect-ratio: 4/5; }
+.card--cta .card__invite {
+  position: absolute; inset: 0; z-index: 1;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: var(--s-5);
+  background: linear-gradient(to top, rgba(10,10,10,.9), rgba(10,10,10,.35) 55%, rgba(10,10,10,.1));
+}
+.card--cta h3 { margin: 0 0 var(--s-2); }
+.card--cta p { margin: 0 0 var(--s-4); font-size: var(--fs-small); color: color-mix(in srgb, var(--paper) 68%, transparent); }
+.card--cta .link { align-self: start; }
+.card--cta:hover > img, .card--cta:focus-visible > img { transform: scale(1.03); }
+
+.card__body { padding: var(--s-4) 0 0; flex-shrink: 0; }
 .card__body h3 { margin: var(--s-2) 0 var(--s-1); }
 .card__body p { margin: 0; font-size: var(--fs-small); color: color-mix(in srgb, currentColor 55%, transparent); }
 .chip { font-size: var(--fs-small); font-weight: 500; color: var(--accent); }
