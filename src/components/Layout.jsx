@@ -42,11 +42,7 @@ function Header() {
   return (
     <header className={`nav ${scrolled ? 'nav--solid' : 'nav--overlay'}`}>
       <Link to="/" className="brand" onClick={() => { setOpen(false); toTop('/') }}>
-        <img className="brand__mark" src={photos.logo} alt="" />
-        <span className="brand__text">
-          Designofiy
-          <em>Interior LLP · Lucknow</em>
-        </span>
+        <img className="brand__mark" src={photos.logo} alt="Designofiy Interior LLP" />
       </Link>
 
       <nav className={`nav__links ${open ? 'is-open' : ''}`}>
@@ -83,8 +79,7 @@ function Footer() {
       <div className="footer__top">
         <div>
           <Link to="/" className="brand brand--footer" onClick={() => toTop('/')}>
-            <img className="brand__mark" src={photos.logo} alt="" />
-            <span className="brand__text">Designofiy<em>Interior LLP</em></span>
+            <img className="brand__mark" src={photos.logo} alt="Designofiy Interior LLP" />
           </Link>
           <p className="footer__blurb">
             Interior design and turnkey execution in Lucknow. Residential, modular and

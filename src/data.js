@@ -464,6 +464,22 @@ export const faqs = [
     q: 'Can I see work in progress?',
     a: 'Always. Sites are open to clients, and you also get weekly photo updates through the build. Recent work is posted on Instagram at @designofiy.',
   },
+  {
+    q: 'Do you provide 3D designs before starting?',
+    a: 'Yes, we create detailed 3D visualisations. You will know exactly how the finished space will look, down to the lighting and textures, before we start any execution.',
+  },
+  {
+    q: 'Are there any hidden charges?',
+    a: 'No. Our itemised quotes are transparent. Any changes in cost will only happen if you explicitly request a change in scope, materials, or design during the project.',
+  },
+  {
+    q: 'Do you handle civil work like ceilings and plumbing?',
+    a: 'Absolutely. Our turnkey execution covers everything from masonry, false ceilings, plumbing, and electricals to the final coat of paint and custom furniture.',
+  },
+  {
+    q: 'How do we get started?',
+    a: 'Reach out via WhatsApp or our contact form. We will schedule a preliminary call, followed by a site visit or a meeting at our studio to discuss your requirements in detail.',
+  },
 ]
 
 export const marquee = [

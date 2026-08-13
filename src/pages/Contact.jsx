@@ -74,11 +74,27 @@ export default function Contact() {
           <h2>Start an enquiry</h2>
           <label>
             Your name
-            <input required value={form.name} onChange={set('name')} placeholder="e.g. Ananya Verma" />
+            <input 
+              required 
+              value={form.name} 
+              onChange={set('name')} 
+              placeholder="e.g. Ananya Verma"
+              pattern="[A-Za-z\s]+"
+              title="Please enter a valid name (letters and spaces only)"
+            />
           </label>
           <label>
             Phone
-            <input required type="tel" value={form.phone} onChange={set('phone')} placeholder="10-digit mobile" />
+            <input 
+              required 
+              type="tel" 
+              value={form.phone} 
+              onChange={set('phone')} 
+              placeholder="10-digit mobile"
+              pattern="\d{10}"
+              maxLength="10"
+              title="Please enter exactly 10 digits"
+            />
           </label>
           <label>
             Project type
