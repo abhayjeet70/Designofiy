@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { faqs, pageHeroes, photos, services } from '../data'
-import { CtaBand } from '../components/common'
+import { business, faqs, marqueeImages, pageHeroes, photos, services } from '../data'
 import { Curtain, PageBanner } from '../components/motion'
+import DiagonalMarquee from '../components/DiagonalMarquee'
 import SlideUpText from '../components/SlideUpText'
 
 function Faqs() {
@@ -76,12 +76,20 @@ export default function Services() {
 
       <Faqs />
 
-      <CtaBand
-        title="Not sure which one you need?"
-        body="Describe the space in a sentence or two. We will tell you what it actually needs, even if that is less than you asked for."
-        cta="Ask us"
-        image={photos.diningOpen}
-      />
+      <DiagonalMarquee images={marqueeImages} angle={-18}>
+        <h2 data-reveal>
+          <SlideUpText split="words" stagger={0.08} inView once>
+            Not sure which one you need?
+          </SlideUpText>
+        </h2>
+        <p data-reveal style={{ '--d': '80ms' }}>
+          Describe the space in a sentence or two. We will tell you what it actually needs, even if that is less than you asked for.
+        </p>
+        <div className="band__cta" data-reveal style={{ '--d': '150ms' }}>
+          <Link className="btn btn--solid" to="/contact">Ask us</Link>
+          <a className="btn" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
+        </div>
+      </DiagonalMarquee>
     </>
   )
 }

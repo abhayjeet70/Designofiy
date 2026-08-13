@@ -1,6 +1,7 @@
-import { business, pageHeroes, photos, stats } from '../data'
-import { CtaBand } from '../components/common'
+import { Link } from 'react-router-dom'
+import { business, marqueeImages, pageHeroes, photos, stats } from '../data'
 import { Curtain, PageBanner } from '../components/motion'
+import DiagonalMarquee from '../components/DiagonalMarquee'
 import SlideUpText from '../components/SlideUpText'
 
 export default function Studio() {
@@ -93,12 +94,20 @@ export default function Studio() {
         </dl>
       </section>
 
-      <CtaBand
-        title="Come see a site."
-        body="The fastest way to judge a studio is to stand in something it built. Ask us and we will arrange a visit."
-        cta="Arrange a visit"
-        image={photos.livingRug}
-      />
+      <DiagonalMarquee images={marqueeImages} angle={-16}>
+        <h2 data-reveal>
+          <SlideUpText split="words" stagger={0.08} inView once>
+            Come see a site.
+          </SlideUpText>
+        </h2>
+        <p data-reveal style={{ '--d': '80ms' }}>
+          The fastest way to judge a studio is to stand in something it built. Ask us and we will arrange a visit.
+        </p>
+        <div className="band__cta" data-reveal style={{ '--d': '150ms' }}>
+          <Link className="btn btn--solid" to="/contact">Arrange a visit</Link>
+          <a className="btn" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
+        </div>
+      </DiagonalMarquee>
     </>
   )
 }

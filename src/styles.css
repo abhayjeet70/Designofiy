@@ -468,24 +468,6 @@ h1 em, h2 em { font-size: 1.06em; }
 .card--wide { grid-column: span 2; }
 .card--wide > img { aspect-ratio: 16/9; }
 .card:hover > img, .card:focus-visible > img { transform: scale(1.03); }
-/* Closing tile in the Work grid. Nine projects across three columns leaves the
-   bottom-right cell empty, because the last card spans two columns and wraps.
-   This fills it with an invitation rather than padding the portfolio out with a
-   stock photo. Copy sits *over* the image, unlike project cards where it sits
-   below, so it never reads as another project. */
-.card--cta { position: relative; display: block; }
-.card--cta > img { aspect-ratio: 4/5; }
-.card--cta .card__invite {
-  position: absolute; inset: 0; z-index: 1;
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: var(--s-5);
-  background: linear-gradient(to top, rgba(10,10,10,.9), rgba(10,10,10,.35) 55%, rgba(10,10,10,.1));
-}
-.card--cta h3 { margin: 0 0 var(--s-2); }
-.card--cta p { margin: 0 0 var(--s-4); font-size: var(--fs-small); color: color-mix(in srgb, var(--paper) 68%, transparent); }
-.card--cta .link { align-self: start; }
-.card--cta:hover > img, .card--cta:focus-visible > img { transform: scale(1.03); }
-
 .card__body { padding: var(--s-4) 0 0; flex-shrink: 0; }
 .card__body h3 { margin: var(--s-2) 0 var(--s-1); }
 .card__body p { margin: 0; font-size: var(--fs-small); color: color-mix(in srgb, currentColor 55%, transparent); }
@@ -810,3 +792,70 @@ h1 em, h2 em { font-size: 1.06em; }
   .lightbox__nav { width: 36px; height: 36px; }
   .fab { right: var(--s-4); bottom: var(--s-4); }
 }
+
+/* ---------- diagonal photo marquee (page-foot band) ---------- */
+.marquee {
+  position: relative;
+  height: clamp(22rem, 40vw, 32rem);
+  overflow: hidden;
+  background: var(--ink);
+  isolation: isolate;
+}
+.marquee__stage {
+  position: absolute; top: 50%; left: 50%;
+  width: 240%;
+  display: grid; gap: var(--s-4);
+  transform: translate(-50%, -50%) rotate(var(--angle, -18deg));
+}
+.marquee__row { display: flex; overflow: hidden; }
+.marquee__track {
+  display: flex; flex: none;
+  animation: marq-left var(--speed, 90s) linear infinite;
+  will-change: transform;
+}
+.marquee__track--rev { animation-name: marq-right; }
+.marquee__set { display: flex; flex: none; }
+.marquee__card {
+  flex: none;
+  width: clamp(150px, 16vw, 250px);
+  aspect-ratio: 4 / 3;
+  margin-right: var(--s-4);
+  overflow: hidden;
+  background: var(--ink-2);
+}
+.marquee__card img { width: 100%; height: 100%; object-fit: cover; }
+
+@keyframes marq-left  { to   { transform: translate3d(-50%, 0, 0) } }
+@keyframes marq-right { from { transform: translate3d(-50%, 0, 0) } }
+
+/* Feathered top and bottom so the diagonal dissolves into the page rather than
+   ending on a hard edge. */
+.marquee__fade { position: absolute; inset-inline: 0; height: 38%; z-index: 2; pointer-events: none; }
+.marquee__fade--top    { top: 0;    background: linear-gradient(to bottom, var(--ink), transparent); }
+.marquee__fade--bottom { bottom: 0; background: linear-gradient(to top,    var(--ink), transparent); }
+
+/* Off-screen: stop the compositor work entirely. */
+.marquee.is-paused .marquee__track { animation-play-state: paused; }
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee__track { animation: none !important; }
+}
+@media (max-width: 40rem) {
+  .marquee { height: clamp(16rem, 55vw, 22rem); }
+}
+
+/* Marquee carrying copy: the photographs become the ground for a CTA. */
+.marquee--cta { height: auto; min-height: clamp(26rem, 44vw, 36rem); display: grid; align-items: center; }
+.marquee__scrim {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(10,10,10,.94) 0%, rgba(10,10,10,.86) 38%, rgba(10,10,10,.55) 70%, rgba(10,10,10,.4) 100%),
+    linear-gradient(to bottom, rgba(10,10,10,.5), transparent 30%, transparent 70%, rgba(10,10,10,.5));
+}
+.marquee__inner {
+  position: relative; z-index: 3;
+  max-width: var(--max-w-narrow);
+  padding: var(--sec-tiny) var(--margin);
+}
+.marquee__inner h2 { margin-bottom: var(--s-4); }
+.marquee__inner p { color: color-mix(in srgb, var(--paper) 72%, transparent); max-width: 46ch; }

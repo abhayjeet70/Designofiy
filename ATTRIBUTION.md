@@ -2,9 +2,18 @@
 
 ## Studio photography
 
-Everything in `public/work/` is Designofiy's own photography. The project cards in
-`src/data.js` (`projects`) carry real localities and years and must only ever use
-these files.
+Everything in `public/work/` is Designofiy's own photography — real project photos
+supplied by the client via Google Drive on 2026-08-13 (113 source files, of which
+the strongest ~15 were selected, auto-rotated per their EXIF orientation, and
+converted to WebP by `tools/img-to-webp.py`). The project cards in `src/data.js`
+(`projects`) carry real localities and years; titles below are inferred from the
+photos and should be confirmed with the studio.
+
+As of this Drive delivery, the two placeholder stock photos previously standing in
+for "Black Marble Bath" and "Marble Feature Living Room" have been replaced with
+real photographs — `slate-stone-bath.webp` / `backlit-vanity-bath.webp` and
+`gallery-living-room.webp` respectively — and their old files removed. Every
+project card in the Work grid is now the studio's own photography.
 
 ## Licensed stock — home hero and ASCII backdrops only
 
@@ -32,25 +41,30 @@ originals so they sit correctly in the landscape hero frame.
 No `premium_photo-` (Unsplash+) assets were used — those are paid and were
 deliberately excluded.
 
-## Licensed stock shown as a project
+## Real photography added 2026-08-13
 
-One further Unsplash image is presented in the Work grid as a completed project,
-added at the client's explicit request to fill the grid:
+Nine project photos were selected from the client's Drive folder and added or
+substituted in this pass. Three replace what was previously licensed stock;
+six are new project entries filling out categories that were thin (Modular
+Kitchens, Decor & Styling, Commercial had one project each before this).
 
-| File | Unsplash photo | Shown as |
+| File | Shown as | Category |
 |---|---|---|
-| `public/work/marble-feature-living.webp` | [photo-1745301558339](https://unsplash.com/photos/1745301558339-44eb3217d5da) — living room with book-matched marble feature wall | "Marble Feature Living Room", Lucknow 2025 |
-| `public/work/black-marble-bath.webp` | [photo-1723468353347](https://unsplash.com/photos/1723468353347-0144264c2618) — black marble tub with brass fixtures | "Black Marble Bath", Lucknow 2025 |
+| `gallery-living-room.webp` | Taupe Gallery Living Room | Residential |
+| `slate-stone-bath.webp` | Slate Stone Bathroom | Bathrooms |
+| `backlit-vanity-bath.webp` | Backlit Stone Vanity | Bathrooms |
+| `jungle-mural-bedroom.webp` | Jungle Mural Bedroom | Residential |
+| `round-table-dining.webp` | Round Table Dining Room | Residential |
+| `duplex-staircase.webp` | Duplex Staircase & Fireplace | Residential |
+| `backlit-pooja-mandir.webp` | Backlit Pooja Mandir | Decor & Styling |
+| `grey-modular-kitchen.webp` | Grey & Wood Modular Kitchen | Modular Kitchens |
+| `travel-office-lounge.webp` | Travel Studio Office Fit-out | Commercial |
 
-Unlike the hero imagery above, these carry a locality and year and read as studio
-work. Each is flagged in `src/data.js` next to its `photos` key and on its project
-entry. **Replace them with real project photographs as they become available.**
-The Work page lede no longer claims every photograph is the studio's own, because
-with these tiles in place that would not be true.
-
-The second (`black-marble-bath`) was added specifically because "Bathrooms" was
-the only filter category with just one project, leaving two empty cells when a
-visitor filtered to it. It brings that filtered view to 2 of 3 cells filled.
-Adding it to the master project list also shifted the unfiltered "All" grid's
-packing, opening a new single-card row at the bottom — see the note on
-`black-marble-bath` in `src/data.js` if that gets revisited.
+The Drive folder contained ~113 photos spanning what reads as at least four
+distinct projects (by decor language and file grouping): a jungle-mural-themed
+apartment, a large multi-bedroom duplex with a double-height stairwell, a
+walnut-and-marble home with a mandir room, and a travel-consultancy office fit
+out. Only the strongest single shot per space was used here — the remaining
+~100 photos are still in the Drive folder and can be worked through for
+per-project galleries (multiple photos per `images: []` array) in a follow-up
+pass, rather than every photo being placed sight-unseen in this one.

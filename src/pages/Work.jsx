@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { pageHeroes, photos, projects } from '../data'
-import { CtaBand, useReveal } from '../components/common'
+import { Link } from 'react-router-dom'
+import { business, marqueeImages, pageHeroes, projects } from '../data'
+import { useReveal } from '../components/common'
 import { PageBanner } from '../components/motion'
+import DiagonalMarquee from '../components/DiagonalMarquee'
+import SlideUpText from '../components/SlideUpText'
 
 export default function Work() {
   const categories = useMemo(
@@ -86,12 +89,21 @@ export default function Work() {
         </div>
       </section>
 
-      <CtaBand
-        title="Want something like this?"
-        body="Send us the floor plan, or just the address. We will come measure and tell you honestly what it takes."
-        image={photos.livingWide}
-        imageAlt=""
-      />
+      <DiagonalMarquee images={marqueeImages} angle={-14}>
+        <h2 data-reveal>
+          <SlideUpText split="words" stagger={0.08} inView once>
+            Want something like this?
+          </SlideUpText>
+        </h2>
+        <p data-reveal style={{ '--d': '80ms' }}>
+          Send us the floor plan, or just the address. We will come measure and tell
+          you honestly what it takes.
+        </p>
+        <div className="band__cta" data-reveal style={{ '--d': '150ms' }}>
+          <Link className="btn btn--solid" to="/contact">Book a consultation</Link>
+          <a className="btn" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
+        </div>
+      </DiagonalMarquee>
 
       {open && (
         <div className="lightbox" onClick={() => setOpen(null)} role="dialog" aria-modal="true" aria-label={open.title}>

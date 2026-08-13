@@ -1,7 +1,10 @@
 import { useState } from 'react'
-import { business, pageHeroes, services } from '../data'
+import { Link } from 'react-router-dom'
+import { business, marqueeImages, pageHeroes, services } from '../data'
 import { WhatsAppIcon, waLink } from '../components/common'
 import { PageBanner } from '../components/motion'
+import DiagonalMarquee from '../components/DiagonalMarquee'
+import SlideUpText from '../components/SlideUpText'
 
 export default function Contact() {
   const [form, setForm] = useState({
@@ -128,6 +131,21 @@ export default function Contact() {
           referrerPolicy="no-referrer-when-downgrade"
         />
       </section>
+
+      <DiagonalMarquee images={marqueeImages} angle={-14}>
+        <h2 data-reveal>
+          <SlideUpText split="words" stagger={0.08} inView once>
+            Rather just talk it through?
+          </SlideUpText>
+        </h2>
+        <p data-reveal style={{ '--d': '80ms' }}>
+          A call is often quicker than a form. Ring the studio directly, or drop a message on WhatsApp and we will pick it up from there.
+        </p>
+        <div className="band__cta" data-reveal style={{ '--d': '150ms' }}>
+          <Link className="btn btn--solid" to="/contact">Book a consultation</Link>
+          <a className="btn" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
+        </div>
+      </DiagonalMarquee>
     </>
   )
 }

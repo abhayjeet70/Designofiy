@@ -1,5 +1,4 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { business } from '../data'
 
 export const waLink = (text) =>
@@ -59,25 +58,5 @@ export function WhatsAppFab() {
     >
       <WhatsAppIcon size={24} />
     </a>
-  )
-}
-
-/* Bottom-of-page conversion block, shared by every inner route.
-   `image` gives the band a photographic ground; the .band--photo scrim keeps the
-   copy legible over it. Home does not use this component — its closing band runs
-   the ASCII canvas instead. */
-export function CtaBand({ title, body, cta = 'Book a consultation', image, imageAlt = '' }) {
-  return (
-    <section className={`band ${image ? 'band--photo' : ''}`} data-reveal>
-      {image && <img className="band__bg" src={image} alt={imageAlt} loading="lazy" />}
-      <div className="band__inner">
-        <h2>{title}</h2>
-        <p>{body}</p>
-        <div className="band__cta">
-          <Link className="btn btn--light" to="/contact">{cta}</Link>
-          <a className="btn btn--ghost-light" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
-        </div>
-      </div>
-    </section>
   )
 }

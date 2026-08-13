@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  business, heroSequence, heroStock, photos, projects, ribbon, services, stats, testimonials,
+  business, heroSequence, marqueeImages, photos, projects, ribbon, services, stats, testimonials,
 } from '../data'
 import { Curtain, useParallax } from '../components/motion'
 import AsciiCanvas, { BACKDROP_ANIM } from '../components/AsciiCanvas'
+import DiagonalMarquee from '../components/DiagonalMarquee'
 import SlideUpText from '../components/SlideUpText'
 
 const ASCII_PARAMS = {
@@ -324,30 +325,6 @@ function Quotes() {
   )
 }
 
-function Invite() {
-  return (
-    <section className="band band--photo">
-      <AsciiCanvas src={heroStock.invite} params={ASCII_PARAMS} />
-      <div className="band__inner">
-        <h2 data-reveal>
-          <SlideUpText split="words" stagger={0.08} inView once>
-            Tell us about the space.
-          </SlideUpText>
-        </h2>
-
-        <p data-reveal style={{ '--d': '80ms' }}>
-          Consultations in {business.city} are on us. Send a few lines about what you are
-          planning and we will come back with a site visit slot.
-        </p>
-        <div className="band__cta" data-reveal style={{ '--d': '150ms' }}>
-          <Link className="btn btn--solid" to="/contact">Start an enquiry</Link>
-          <a className="btn" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
-        </div>
-      </div>
-    </section>
-  )
-}
-
 export default function Home() {
   return (
     <>
@@ -359,7 +336,21 @@ export default function Home() {
       <Ribbon />
       <ServicesTeaser />
       <Quotes />
-      <Invite />
+      <DiagonalMarquee images={marqueeImages}>
+        <h2 data-reveal>
+          <SlideUpText split="words" stagger={0.08} inView once>
+            Tell us about the space.
+          </SlideUpText>
+        </h2>
+        <p data-reveal style={{ '--d': '80ms' }}>
+          Consultations in {business.city} are on us. Send a few lines about what you are
+          planning and we will come back with a site visit slot.
+        </p>
+        <div className="band__cta" data-reveal style={{ '--d': '150ms' }}>
+          <Link className="btn btn--solid" to="/contact">Start an enquiry</Link>
+          <a className="btn" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
+        </div>
+      </DiagonalMarquee>
     </>
   )
 }

@@ -1,6 +1,7 @@
-import { pageHeroes, photos, process } from '../data'
-import { CtaBand } from '../components/common'
+import { Link } from 'react-router-dom'
+import { business, marqueeImages, pageHeroes, photos, process } from '../data'
 import { Curtain, PageBanner } from '../components/motion'
+import DiagonalMarquee from '../components/DiagonalMarquee'
 import SlideUpText from '../components/SlideUpText'
 
 // One photograph per step, so the timeline reads as work rather than a list.
@@ -65,12 +66,20 @@ export default function Process() {
         </div>
       </section>
 
-      <CtaBand
-        title="Ready for step one?"
-        body="Step one is a conversation, and it costs nothing. Tell us about the space and we will take it from there."
-        cta="Start the conversation"
-        image={photos.bedroomTerracotta}
-      />
+      <DiagonalMarquee images={marqueeImages} angle={-20}>
+        <h2 data-reveal>
+          <SlideUpText split="words" stagger={0.08} inView once>
+            Ready for step one?
+          </SlideUpText>
+        </h2>
+        <p data-reveal style={{ '--d': '80ms' }}>
+          Step one is a conversation, and it costs nothing. Tell us about the space and we will take it from there.
+        </p>
+        <div className="band__cta" data-reveal style={{ '--d': '150ms' }}>
+          <Link className="btn btn--solid" to="/contact">Start the conversation</Link>
+          <a className="btn" href={`tel:${business.phone}`}>{business.phoneDisplay}</a>
+        </div>
+      </DiagonalMarquee>
     </>
   )
 }

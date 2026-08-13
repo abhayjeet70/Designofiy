@@ -6,54 +6,47 @@
 //   MCA/Tofler - LLPIN ABB-0142, incorporated 14 May 2022
 //   GST        - 09AATFD7640L1ZP (Uttar Pradesh)
 //
-// PHOTOS: photography in /public/work/ is the studio's own, with ONE exception -
-// marble-feature-living.webp is licensed stock (see ATTRIBUTION.md) presented as a
-// project at the client's request. Project titles, localities and years below are
-// placeholder labels - confirm them with the studio.
+// PHOTOS: every photograph on the site is the studio's own work, supplied by the
+// client as a Drive folder on 2026-08-13 (113 files). They are auto-rotated from
+// their EXIF orientation and converted to WebP under /public/work/dfy/, indexed
+// by the dfy() helper below. No stock photography remains anywhere on the site.
+// Project titles, localities and years are inferred from the photographs and
+// grouped by decor language - CONFIRM THEM WITH THE STUDIO before launch.
 
-// Editorial photography for the home hero and the two ASCII backdrops only.
-// These are licensed stock (Unsplash, free for commercial use — see ATTRIBUTION.md),
-// NOT studio work, so they are kept on their own keys: the project cards in
-// `projects` below carry localities and years and must stay the studio's own
-// photographs.
+const dfy = (n) => `/work/dfy/${String(n).padStart(3, '0')}.webp`
+
+// Backdrops for the home hero ASCII canvas and the closing band.
 export const heroStock = {
-  bg: '/hero/hero_bg.webp',
-  living: '/hero/stock-living.webp',
-  kitchen: '/hero/stock-kitchen.webp',
-  wardrobe: '/hero/stock-wardrobe.webp',
-  dining: '/hero/stock-dining.webp',
-  bathroom: '/hero/stock-bathroom.webp',
-  invite: '/hero/stock-invite.webp',
-  // Charred-timber texture for the Work grid's closing CTA tile. Deliberately a
-  // material rather than a room, so it cannot be mistaken for a project photo.
-  ctaTile: '/hero/cta-texture.webp',
+  bg: dfy(82),
+  living: dfy(102),
+  kitchen: dfy(77),
+  wardrobe: dfy(16),
+  dining: dfy(93),
+  bathroom: dfy(51),
+  invite: dfy(15),
 }
 
 export const photos = {
   logo: '/logo.png',
   heroBg: heroStock.bg,
-  living: '/work/living-room.webp',
-  livingWarm: '/work/living-warm.webp',
-  livingWide: '/work/living-wide.webp',
-  livingRug: '/work/living-rug.webp',
-  diningArched: '/work/dining-arched.webp',
-  diningOpen: '/work/dining-open-plan.webp',
-  kitchen: '/work/modular-kitchen.webp',
-  bedroomClassic: '/work/bedroom-classic.webp',
-  bedroomTerracotta: '/work/bedroom-terracotta.webp',
-  wardrobeCorridor: '/work/wardrobe-corridor.webp',
-  wardrobeInterior: '/work/wardrobe-interior.webp',
-  wardrobePulldown: '/work/wardrobe-pulldown.webp',
-  wardrobeShelving: '/work/wardrobe-shelving.webp',
-  bathroom: '/work/bathroom-grey.webp',
-  partition: '/work/partition-unit.webp',
-  salon: '/work/salon.webp',
-  // Licensed stock, NOT studio work — see the note above and ATTRIBUTION.md.
-  marbleFeature: '/work/marble-feature-living.webp',
-  // Licensed stock, NOT studio work — see the note above and ATTRIBUTION.md.
-  blackMarbleBath: '/work/black-marble-bath.webp',
-  spaStoneBath: '/work/spa-stone-bath.webp',
+  living: dfy(24),
+  livingWarm: dfy(21),
+  livingWide: dfy(84),
+  livingRug: dfy(23),
+  diningArched: dfy(31),
+  diningOpen: dfy(95),
+  kitchen: dfy(77),
+  bedroomClassic: dfy(32),
+  bedroomTerracotta: dfy(6),
+  wardrobeCorridor: dfy(34),
+  wardrobeInterior: dfy(37),
+  wardrobePulldown: dfy(36),
+  wardrobeShelving: dfy(85),
+  bathroom: dfy(0),
+  partition: dfy(89),
+  salon: dfy(15),
 }
+
 
 // The hero runs as a sequence: the backdrop holds, while the photograph and the
 // headline advance together. `lead` is set in the serif italic accent face.
@@ -61,7 +54,7 @@ export const photos = {
 export const heroSequence = [
   {
     tag: 'Living',
-    src: heroStock.living,
+    src: dfy(102),
     alt: 'Panelled living room in warm taupe with gold ring pendants and a marble floor',
     lines: ['Interiors with', 'a sense of', '<em>permanence</em>'],
     sub: 'Sand leather, hand-knotted wool and a single warm pendant. Rooms composed to hold their quality for a decade, not a season.',
@@ -69,7 +62,7 @@ export const heroSequence = [
   },
   {
     tag: 'Kitchens',
-    src: heroStock.kitchen,
+    src: dfy(77),
     alt: 'Handleless modular kitchen in walnut and sand with a full-width marble backsplash',
     lines: ['Kitchens made', 'for the way', 'you <em>cook</em>'],
     sub: 'Fluted glass lit from within, quartz run full width, and drawer stacks where lesser kitchens put shutters.',
@@ -77,7 +70,7 @@ export const heroSequence = [
   },
   {
     tag: 'Wardrobes',
-    src: heroStock.wardrobe,
+    src: dfy(16),
     alt: 'Dressing room with a backlit mirror, fluted glass screen and a glazed wardrobe run',
     lines: ['Joinery that', 'earns its', '<em>keep</em>'],
     sub: 'Teak frames, cane-textured panels, and interiors planned to the centimetre before a single shutter was drawn.',
@@ -85,7 +78,7 @@ export const heroSequence = [
   },
   {
     tag: 'Dining',
-    src: heroStock.dining,
+    src: dfy(93),
     alt: 'Backlit glass crockery units in dark oak above a marble counter, with brass pendants',
     lines: ['The table', 'everything', '<em>gathers</em> around'],
     sub: 'Marble on a fluted timber base, arched crockery units lit from behind glass, and seating in two complementary weaves.',
@@ -93,7 +86,7 @@ export const heroSequence = [
   },
   {
     tag: 'Bathrooms',
-    src: heroStock.bathroom,
+    src: dfy(51),
     alt: 'Freestanding black stone bath against a warm timber wall under a concealed cove light',
     lines: ['Stone, light', 'and quiet', '<em>restraint</em>'],
     sub: 'Full-height charcoal stone, a honed black counter, concealed services and a mirror lit at exactly face height.',
@@ -105,26 +98,35 @@ export const heroSequence = [
 // with their subject on the right, so banner copy sits left against clear wall.
 export const pageHeroes = {
   work: {
-    src: '/hero/work.webp',
+    src: dfy(95),
     alt: 'Photographs of finished interiors propped against a plaster wall with stone samples and a rolled drawing',
   },
   services: {
-    src: '/hero/services.webp',
+    src: dfy(91),
     alt: 'Fan of material samples: travertine, fluted timber, brass, marble and folded fabric',
   },
   studio: {
-    src: '/hero/studio.webp',
+    src: dfy(96),
     alt: 'A studio desk with design books, pencils, an interior sketch and drawing sheets',
   },
   process: {
-    src: '/hero/process.webp',
+    src: dfy(105),
     alt: 'Five stepped cards reading Discover, Design, Develop, Execute and Deliver',
   },
   contact: {
-    src: '/hero/contact.webp',
+    src: dfy(17),
     alt: 'A card reading "Let\'s create something beautiful together" beside a Designofiy business card, pen and envelope',
   },
 }
+
+// Landscape frames for the diagonal marquee band that closes the Home and Work
+// pages. Chosen for wide crops and a spread across rooms so the rotated rows do
+// not repeat a look.
+export const marqueeImages = [
+  dfy(21), dfy(93), dfy(77), dfy(84), dfy(31), dfy(102),
+  dfy(6), dfy(64), dfy(50), dfy(107), dfy(89), dfy(19),
+  dfy(71), dfy(95), dfy(15), dfy(66),
+]
 
 // The horizontally scrolling photo ribbon on the home page.
 export const ribbon = [
@@ -137,8 +139,8 @@ export const business = {
   legalName: 'Designofiy Interior LLP',
   tagline: 'Enhance your home style',
   city: 'Lucknow',
-  phone: '+917349752323',
-  phoneDisplay: '+91 73497 52323',
+  phone: '+917388000830',
+  phoneDisplay: '+91 73880 00830',
   email: 'hello@designofiy.com',
   instagram: 'https://www.instagram.com/designofiy/',
   instagramHandle: '@designofiy',
@@ -246,14 +248,24 @@ export const services = [
 // `images` drives the lightbox gallery; the first entry is also the grid thumbnail.
 export const projects = [
   {
-    slug: 'sand-leather-living-room',
-    title: 'Sand Leather Living Room',
+    slug: 'jungle-mural-residence',
+    title: 'Jungle Mural Residence',
     category: 'Residential',
     location: 'Lucknow',
     year: '2025',
-    note: 'Twin sand-toned leather sofas facing a pair of round nesting tables, with a hand-knotted marbled rug tying the seating back to the polished stone floor. Framed textile art anchors the wall, and a single amber pendant does the warm work that the cove lighting deliberately leaves alone.',
-    images: [photos.livingWarm, photos.livingWide, photos.livingRug, photos.living],
-    span: 'tall',
+    note: 'A hand-painted jungle mural runs the full headboard wall, answered by a walnut media unit on the opposite run and herringbone flooring throughout. Curved upholstered headboard, dresser niche and matching wardrobe shutters.',
+    images: [dfy(6), dfy(10), dfy(70), dfy(72), dfy(7), dfy(71), dfy(73), dfy(74), dfy(11), dfy(75)],
+    span: 'wide',
+    featured: true,
+  },
+  {
+    slug: 'beige-leather-living',
+    title: 'Beige Leather Living Room',
+    category: 'Residential',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'A deep beige leather sectional on a marbled charcoal rug, framed prints filling the long wall and warm floor lamps at either end. Lit almost entirely without downlights.',
+    images: [dfy(21), dfy(18), dfy(20), dfy(23), dfy(24), dfy(19), dfy(13), dfy(14), dfy(22)],
     featured: true,
   },
   {
@@ -261,127 +273,182 @@ export const projects = [
     title: 'Arched Crockery Dining',
     category: 'Residential',
     location: 'Lucknow',
-    year: '2025',
-    note: 'A marble-topped table on a fluted timber base, ringed by upholstered chairs in two complementary weaves. Behind it, a run of arched-glass crockery units lit from within, with a stone-topped counter for serving.',
-    images: [photos.diningArched, photos.diningOpen],
-    span: 'wide',
+    year: '2026',
+    note: 'An arched, backlit crockery unit in ivory and gold behind a marble-top dining table, with woven-back chairs and a runner of block-printed placemats.',
+    images: [dfy(31), dfy(30), dfy(67)],
     featured: true,
   },
   {
-    slug: 'teak-cane-wardrobe-run',
-    title: 'Teak & Cane Wardrobe Run',
-    category: 'Wardrobes',
+    slug: 'grey-marble-bathroom',
+    title: 'Grey Marble Bathroom',
+    category: 'Bathrooms',
     location: 'Lucknow',
     year: '2025',
-    note: 'A full-height wardrobe wall in teak frames with cane-textured inset panels, running the length of a herringbone floor. Inside: lit white carcasses, brass hanging rails, a pull-down rail for the top tier, and drawer modules sized before the shutters were ever drawn.',
-    images: [photos.wardrobeCorridor, photos.wardrobeShelving, photos.wardrobeInterior, photos.wardrobePulldown],
+    note: 'Grey-green marble run floor to ceiling and across the shower return, a walnut vanity with a backlit square mirror, and a frameless glass screen keeping the wet zone open.',
+    images: [dfy(0), dfy(1), dfy(2), dfy(3), dfy(4)],
     featured: true,
   },
   {
-    slug: 'fluted-glass-modular-kitchen',
-    title: 'Fluted Glass Modular Kitchen',
-    category: 'Modular Kitchens',
+    slug: 'dark-stone-bathroom',
+    title: 'Dark Stone Bathroom',
+    category: 'Bathrooms',
     location: 'Lucknow',
-    year: '2025',
-    note: 'A handleless parallel kitchen in beige and black. Fluted glass wall units lit from within, a full-width quartz counter, profile lighting under the overheads, and deep drawer stacks instead of shutters below the hob.',
-    images: [photos.kitchen],
-    featured: true,
+    year: '2026',
+    note: 'Charcoal stone, an oval vessel basin on a honed black counter and a full-width backlit mirror. Cool-toned and deliberately restrained.',
+    images: [dfy(38), dfy(50), dfy(51)],
   },
   {
-    slug: 'terracotta-panelled-bedroom',
-    title: 'Terracotta Panelled Bedroom',
-    category: 'Residential',
+    slug: 'backlit-vanity-bath',
+    title: 'Backlit Stone Vanity',
+    category: 'Bathrooms',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'A warm cove light washes the wall behind the mirror over a honed stone counter and undermount basin, with a compact tub tucked into the return.',
+    images: [dfy(61), dfy(62)],
+  },
+  {
+    slug: 'maroon-powder-room',
+    title: 'Maroon Powder Room',
+    category: 'Bathrooms',
     location: 'Lucknow',
     year: '2025',
-    note: 'A moulded terracotta accent wall behind an upholstered bed, balanced by fluted ivory panelling on the adjacent run. Wall sconce, wooden fan and a slim work nook keep the room usable as well as photogenic.',
-    images: [photos.bedroomTerracotta],
+    note: 'A small guest bath given the full treatment: deep maroon walls, a gold-framed oval mirror and a stone counter with a brushed brass mixer.',
+    images: [dfy(98)],
+  },
+  {
+    slug: 'backlit-pooja-mandir',
+    title: 'Backlit Pooja Mandir',
+    category: 'Decor & Styling',
+    location: 'Lucknow',
+    year: '2025',
+    note: 'An arched mandir niche in white and gold, backlit around a carved mandala with a shloka etched above the altar. Open shelving either side and a drawer bank below for daily use.',
+    images: [dfy(99), dfy(12), dfy(100), dfy(101)],
     span: 'tall',
     featured: true,
   },
   {
-    slug: 'charcoal-stone-bathroom',
-    title: 'Charcoal Stone Bathroom',
-    category: 'Bathrooms',
+    slug: 'wardrobe-run-interiors',
+    title: 'Wardrobe Run & Interiors',
+    category: 'Wardrobes',
     location: 'Lucknow',
-    year: '2025',
-    note: 'Full-height charcoal stone with a honed black counter, a rounded vessel basin and a backlit circular mirror. Slim cylinder pendants either side, a recessed niche stack for storage, and a clear glass screen keeping the shower open to the room.',
-    images: [photos.bathroom],
+    year: '2026',
+    note: 'A full-height walnut wardrobe run planned from the inside out — hanging, folding and drawer space set before a single shutter was drawn. Glazed and mirrored fronts where the corridor needed light.',
+    images: [dfy(34), dfy(35), dfy(36), dfy(37), dfy(45), dfy(49)],
     featured: true,
   },
   {
-    slug: 'minimalist-ambient-living',
-    title: 'Minimalist Ambient Living',
+    slug: 'white-wardrobe-corridor',
+    title: 'White Wardrobe Corridor',
+    category: 'Wardrobes',
+    location: 'Lucknow',
+    year: '2025',
+    note: 'A tall white wardrobe wall down a narrow passage, handleless and flush so the corridor keeps its width, with an oak run continuing into the bedroom.',
+    images: [dfy(5), dfy(16), dfy(106), dfy(25), dfy(56), dfy(57), dfy(58)],
+  },
+  {
+    slug: 'grey-modular-kitchen',
+    title: 'Grey & Oak Modular Kitchen',
+    category: 'Modular Kitchens',
+    location: 'Lucknow',
+    year: '2025',
+    note: 'A U-shaped kitchen in slate grey and warm oak, full-height tall units, an under-cabinet hob run and a breakfast counter closing the working triangle.',
+    images: [dfy(77), dfy(76), dfy(97)],
+    featured: true,
+  },
+  {
+    slug: 'island-kitchen',
+    title: 'Island Kitchen & Pantry',
+    category: 'Modular Kitchens',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'A powder-blue island kitchen with a full-height fridge bay, concealed pantry storage and a lit shelf niche over the counter run.',
+    images: [dfy(78), dfy(79)],
+  },
+  {
+    slug: 'duplex-staircase-bar',
+    title: 'Duplex Staircase & Bar',
     category: 'Residential',
     location: 'Lucknow',
     year: '2025',
-    note: 'A minimal living space bathed in natural light, featuring warm wooden textures, neutral upholstery, and subtle ambient lighting for a calm, serene environment.',
-    images: ['https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'],
+    note: 'A double-height stairwell under a cascading crystal chandelier, a blue-panelled bar counter set into the walnut wall below, and a carpeted timber stair with a wrought-iron balustrade.',
+    images: [dfy(84), dfy(86), dfy(87), dfy(80), dfy(83), dfy(88), dfy(82), dfy(92), dfy(81)],
     span: 'wide',
+  },
+  {
+    slug: 'round-table-dining',
+    title: 'Round Table Dining',
+    category: 'Residential',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'A round marble-top dining table on a fluted timber base with woven-back chairs, opening onto a sofa run with paired timber coffee tables.',
+    images: [dfy(64), dfy(63), dfy(65), dfy(68), dfy(66), dfy(69)],
     featured: true,
   },
   {
-    slug: 'black-marble-bath',
-    title: 'Black Marble Bath',
-    category: 'Bathrooms',
-    location: 'Lucknow',
-    year: '2025',
-    note: 'A book-matched black marble bath surround with a deep soaking tub, brass fixtures and a wall-mounted vanity mirror set into the stone.',
-    // NOTE: licensed stock photography, not a delivered project — added at the
-    // client's request so the Bathrooms filter is not left with an empty grid
-    // cell. Swap `images` for a real project photo when one is available.
-    images: [photos.blackMarbleBath],
-  },
-  {
-    slug: 'spa-stone-bathroom',
-    title: 'Spa Stone Bathroom',
-    category: 'Bathrooms',
-    location: 'Lucknow',
-    year: '2025',
-    note: 'Warm stone walls, a freestanding tub and a walk-in rain shower behind a frameless glass screen.',
-    images: [photos.spaStoneBath],
-  },
-  {
-    slug: 'ivory-teak-bedroom',
-    title: 'Ivory & Teak Bedroom',
+    slug: 'pink-bedroom-suite',
+    title: 'Blush Bedroom Suite',
     category: 'Residential',
     location: 'Lucknow',
-    year: '2024',
-    note: 'A quieter guest bedroom. Teak headboard and wardrobe against white walls, brass wall lanterns either side, and a recessed ceiling with concealed spots for even, shadow-free light.',
-    images: [photos.bedroomClassic],
+    year: '2026',
+    note: 'A blush and chocolate bedroom with a channel-tufted headboard, striped drapery to the full height and a black-framed dresser mirror opposite.',
+    images: [dfy(52), dfy(41), dfy(47), dfy(48), dfy(53), dfy(54), dfy(55)],
   },
   {
-    slug: 'crate-steel-partition',
-    title: 'Crate & Steel Partition',
+    slug: 'navy-bedroom',
+    title: 'Navy & Chalk Bedroom',
+    category: 'Residential',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'Navy bedding against chalk walls, a slim pendant either side of the bed in place of table lamps, and a drawer bank built into the bed base.',
+    images: [dfy(59), dfy(60)],
+  },
+  {
+    slug: 'herringbone-bedroom',
+    title: 'Herringbone Guest Bedroom',
+    category: 'Residential',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'A quieter guest room — teak headboard and wardrobe against white walls, brass wall lanterns either side and herringbone timber underfoot.',
+    images: [dfy(32), dfy(33), dfy(39), dfy(40), dfy(28), dfy(29), dfy(8), dfy(9)],
+  },
+  {
+    slug: 'study-nook',
+    title: 'Study Nooks & Display',
     category: 'Decor & Styling',
     location: 'Lucknow',
-    year: '2024',
-    note: 'A slim black steel frame with reclaimed pine crates set at alternating depths. A room divider that stores, displays and plants without closing off the light between two zones.',
-    images: [photos.partition],
-  },
-  {
-    slug: 'olive-salon-fit-out',
-    title: 'Olive Salon Fit-out',
-    category: 'Commercial',
-    location: 'Lucknow',
-    year: '2024',
-    note: 'Full-height olive shutter walls, backlit mirror stations at face level so colour work reads true, tan leather chairs and a dome pendant over the styling floor.',
-    images: [photos.salon],
+    year: '2026',
+    note: 'Compact work nooks carved out of bedroom walls: a rust-backed desk with a floating shelf over, a lit display column beside it, and framed botanicals opposite.',
+    images: [dfy(42), dfy(43), dfy(44), dfy(26), dfy(27), dfy(46)],
     span: 'wide',
   },
   {
-    slug: 'marble-feature-living-room',
-    title: 'Marble Feature Living Room',
-    category: 'Residential',
+    slug: 'travel-office-lounge',
+    title: 'Travel Studio Lounge',
+    category: 'Commercial',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'A mustard velvet lounge under a curved wall of aviation photography — the waiting area of a full office fit-out for a travel consultancy.',
+    images: [dfy(107), dfy(108)],
+  },
+  {
+    slug: 'travel-office-cabins',
+    title: 'Travel Studio Cabins',
+    category: 'Commercial',
+    location: 'Lucknow',
+    year: '2026',
+    note: 'The rest of the same fit-out: a private cabin with a timber world map on textured stone, open desks along the window wall, and a blue-lit briefing room seated like a cabin interior.',
+    images: [dfy(111), dfy(112), dfy(110), dfy(109)],
+  },
+  {
+    slug: 'storage-walls',
+    title: 'Storage Walls & Media Units',
+    category: 'Wardrobes',
     location: 'Lucknow',
     year: '2025',
-    note: 'A book-matched marble feature wall behind a channel-tufted sofa, fluted timber returns, a carved jaali screen to the entry and brass nesting tables on a marble floor.',
-    // NOTE: licensed stock photography, not a delivered project. Added at the
-    // client's request to fill the grid. Swap `images` for a real project photo
-    // when one is available.
-    images: [photos.marbleFeature],
+    note: 'Full-height storage runs treated as joinery rather than furniture — flush shutters, open display bays in contrasting walnut, and a media unit built into the same wall.',
+    images: [dfy(85), dfy(94), dfy(89), dfy(90), dfy(103), dfy(104)],
   },
 ]
-
 
 export const process = [
   {
