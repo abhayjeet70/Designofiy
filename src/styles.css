@@ -801,8 +801,8 @@ h1 em, h2 em { font-size: 1.06em; }
   .detail__grid figure.is-lead { grid-row: span 1; }
   .detail__grid figure.is-lead img, .card--tall > img { aspect-ratio: 3/4; }
   .spotlight__thumbs { grid-template-columns: repeat(3, 1fr); }
-  .statband, .timings, .records { grid-template-columns: 1fr; }
-  .statband > div, .timings > div, .records > div { border-left: 0 !important; padding-left: 0 !important; }
+  .statband, .timings, .records { grid-template-columns: 1fr; text-align: center; }
+  .statband > div, .timings > div, .records > div { border-left: 0 !important; padding-inline: var(--margin) !important; }
   .statband > div + div { border-top: 1px solid var(--line); }
   .teaser__row { grid-template-columns: 2rem 1fr auto; gap: var(--s-4); }
   .teaser__row p { display: none; }
