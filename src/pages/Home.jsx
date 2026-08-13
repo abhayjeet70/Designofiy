@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
-  business, heroSequence, photos, projects, ribbon, services, stats, testimonials,
+  business, heroSequence, heroStock, photos, projects, ribbon, services, stats, testimonials,
 } from '../data'
 import { Curtain, useParallax } from '../components/motion'
-import AsciiCanvas from '../components/AsciiCanvas'
+import AsciiCanvas, { BACKDROP_ANIM } from '../components/AsciiCanvas'
 import SlideUpText from '../components/SlideUpText'
 
 const ASCII_PARAMS = {
@@ -15,18 +15,18 @@ const ASCII_PARAMS = {
   cellSize: 9,
   coverage: 100,
   invert: false,
-  brightness: 0,
-  contrast: 158,
-  density: 20,
+  /* density is the lever that matters: drawDither scales the Bayer threshold by
+     density/20, so 20 lights almost every cell and swamps the headline. Held low
+     so only the highlights of the source punch through onto the gradient. */
+  brightness: -6,
+  contrast: 155,
+  density: 8,
   tint: '#3ca6ff',
   tintOpacity: 0,
   overlayBlend: 'multiply',
   saturation: 100,
   grayscale: 0,
-  animated: true,
-  animStyle: 'pulse',
-  animSpeed: { enabled: true, intensity: 100 },
-  animIntensity: { enabled: true, intensity: 60 },
+  ...BACKDROP_ANIM,
   pfx: {
     vignette: { enabled: false, intensity: 38 },
     scanLines: { enabled: false, intensity: 40 },
@@ -42,7 +42,9 @@ const ASCII_PARAMS = {
   mask: { enabled: false, invert: false, dataUrl: null },
 }
 
-const HOLD = 3600 // ms each slide holds before advancing
+// ms each slide holds before advancing. Paired with --hero-ken in styles.css,
+// which must stay just under this so the drift lands before the swap.
+const HOLD = 3000
 
 /* The backdrop holds still while the photograph and the headline advance together.
    Autoplay pauses on hover/focus and never starts under prefers-reduced-motion. */
@@ -87,9 +89,12 @@ function Hero() {
             <span className="mask" key={n}>
               <SlideUpText
                 split="words"
-                delay={n * 0.09}
-                stagger={0.07}
-                style={{ '--d': `${n * 90}ms` }}
+                delay={n * 0.06}
+                stagger={0.045}
+                /* tighter than the 0.55s default so all three lines land well
+                   inside the 3s hold rather than still moving at the swap */
+                transition={{ type: 'tween', ease: [0.625, 0.05, 0, 1], duration: 0.42 }}
+                style={{ '--d': `${n * 60}ms` }}
               >
                 {line.replace(/<[^>]+>/g, '')}
               </SlideUpText>
@@ -314,7 +319,7 @@ function Quotes() {
 function Invite() {
   return (
     <section className="band band--photo">
-      <AsciiCanvas src={photos.livingRug} params={ASCII_PARAMS} />
+      <AsciiCanvas src={heroStock.invite} params={ASCII_PARAMS} />
       <div className="band__inner">
         <h2 data-reveal>
           <SlideUpText split="words" stagger={0.08} inView once>

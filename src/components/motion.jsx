@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import AsciiCanvas from './AsciiCanvas'
+import AsciiCanvas, { BACKDROP_ANIM } from './AsciiCanvas'
 import SlideUpText from './SlideUpText'
 
 const reduced = () =>
@@ -25,7 +25,13 @@ export function useParallax(speed = 0.18) {
       }
       // -1 above the fold, 0 centred, 1 below.
       const progress = (r.top + r.height / 2 - vh / 2) / vh
-      el.style.setProperty('--py', `${progress * speed * 100}px`)
+      // Use the independent `translate` property rather than a --py custom
+      // property. Two reasons: custom properties invalidate style for the
+      // element *and its whole subtree* (and .hero__bg's subtree holds the
+      // canvas), and `translate` composes with the `transform: scale()` the
+      // curtain reveal uses instead of clobbering it — so this no longer gets
+      // dragged through that rule's 1.4s transform transition.
+      el.style.translate = `0 ${(progress * speed * 100).toFixed(2)}px`
       ticking = false
     }
     const onScroll = () => {
@@ -82,16 +88,17 @@ const BANNER_PARAMS = {
   cellSize: 9,
   coverage: 100,
   invert: false,
+  /* Deliberately NOT the same as ASCII_PARAMS in Home. The banner sources in
+     `pageHeroes` are light flatlays, so most cells sit well above the Bayer
+     threshold and a full density reads correctly. Home's source is a dark
+     interior and needs a much lower density — see the note there. */
   brightness: 0,
   contrast: 158,
   density: 20,
   tintOpacity: 0,
   saturation: 100,
   grayscale: 0,
-  animated: true,
-  animStyle: 'pulse',
-  animSpeed: { enabled: true, intensity: 100 },
-  animIntensity: { enabled: true, intensity: 60 },
+  ...BACKDROP_ANIM,
   pfx: {
     vignette: { enabled: false, intensity: 38 },
     scanLines: { enabled: false, intensity: 40 },

@@ -21,23 +21,23 @@ const CHAR_SETS = {
 }
 
 /* ---------- helpers ---------- */
+/* Backing-store scale. Capped at 1.5: the output is a 4x4 dither cell, so there
+   is nothing for a 2x buffer to resolve, and area (and therefore fill cost)
+   grows with the square of this number. */
+const MAX_DPR = 1.5
+const dpr = () => Math.min(window.devicePixelRatio || 1, MAX_DPR)
+
 const clamp = (v, lo = 0, hi = 1) => Math.max(lo, Math.min(hi, v))
 const lerp = (a, b, t) => a + (b - a) * t
 
-function sampleCell(data, imgW, x0, y0, w, h) {
-  let r = 0, g = 0, b = 0, n = 0
-  const x1 = Math.min(x0 + w, imgW)
-  const rowW = imgW * 4
-  for (let cy = y0; cy < y0 + h; cy++) {
-    for (let cx = x0; cx < x1; cx++) {
-      const i = cy * rowW + cx * 4
-      r += data[i]; g += data[i + 1]; b += data[i + 2]
-      n++
-    }
-  }
-  if (n === 0) return [0, 0, 0]
-  return [r / n, g / n, b / n]
-}
+/* Modes handled by the per-cell Canvas2D fallback. 'dither' is absent on
+   purpose: it takes the fast ImageData path, and anything unrecognised falls
+   back to dither too, matching the original `else` branch. */
+const MODES = new Set([
+  'characters', 'dots', 'pixel', 'mosaic', 'cross', 'diamond', 'lines',
+  'diagonal', 'hatch', 'stars', 'hearts', 'hexagons', 'triangles', 'rings',
+  'bubbles', 'halfblocks',
+])
 
 function luminance(r, g, b) {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b
@@ -70,6 +70,8 @@ const BAYER = [
   [ 3,11, 1, 9],
   [15, 7,13, 5],
 ]
+// Same matrix, pre-divided and flattened for the hot rasteriser loop.
+const BAYER_FLAT = Float32Array.from(BAYER.flat(), (v) => v / 16)
 
 function drawDither(ctx, cx, cy, cell, r, g, b, lum, invert, density, animMod) {
   const threshold = invert ? 1 - lum : lum
@@ -336,6 +338,23 @@ function applyPixelate(ctx, w, h, intensity) {
   }
 }
 
+/* Shared pulse settings for every backdrop on the site, so the hero and the
+   inner-page banners always drift at the same rate.
+
+   `animSpeed.intensity` is a percentage of the base rate: drawFrame computes
+   animBase = t * (intensity / 100) * 1.4, and the pulse is sin(animBase * 2PI),
+   so 100 is a 1.4Hz throb. That read as restless pixel noise behind the
+   headline. 28 puts it at roughly 0.4Hz — one slow breath every 2.5s.
+
+   `animIntensity` is amplitude, not rate; it is left alone so the effect keeps
+   the same depth, just calmer. */
+export const BACKDROP_ANIM = {
+  animated: true,
+  animStyle: 'pulse',
+  animSpeed: { enabled: true, intensity: 28 },
+  animIntensity: { enabled: true, intensity: 60 },
+}
+
 /* ---------- default parameters ---------- */
 
 const DEFAULT_PARAMS = {
@@ -366,10 +385,7 @@ const DEFAULT_PARAMS = {
     halftone: { enabled: false, intensity: 20 },
     filmDust: { enabled: false, intensity: 20 },
   },
-  animated: true,
-  animStyle: 'pulse',
-  animSpeed: { enabled: true, intensity: 100 },
-  animIntensity: { enabled: true, intensity: 60 },
+  ...BACKDROP_ANIM,
   lights: { enabled: false, points: [] },
   mask: { enabled: false, invert: false, dataUrl: null },
 }
@@ -397,13 +413,204 @@ export default function AsciiCanvas({ src, params: userParams = {}, className = 
     imgRef.current = img
 
     let running = true
-    let lastSrcData = null
     let lastW = 0, lastH = 0
+
+    /* --- when the loop is allowed to run ---------------------------------
+       The effect is decorative and costs a full grid redraw per frame, so it
+       only runs while the canvas is actually on screen, the tab is focused,
+       and the user has not asked for reduced motion. Previously it ran flat
+       out for the life of the page, including for canvases scrolled far out
+       of view and for background tabs. */
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
+    let onScreen = false
+    let imgReady = false
+    let lastFrameAt = 0
+
+    // A pulse at ~1.4Hz does not need 60fps, and every frame skipped is a full
+    // grid of fillRects not issued.
+    const MIN_FRAME_MS = 1000 / 30
+
+    const shouldRun = () => imgReady && onScreen && !document.hidden
+
+    const stop = () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current)
+        rafRef.current = null
+      }
+    }
+
+    const start = () => {
+      if (!running || rafRef.current !== null || !shouldRun()) return
+      if (motionQuery.matches) {
+        // Reduced motion: one static frame, never scheduled again. Drawn at
+        // t=0 so the pulse sits at its neutral phase — passing the wall clock
+        // here would freeze the effect at an arbitrary point in the cycle.
+        drawFrame(0)
+        return
+      }
+      lastFrameAt = 0
+      rafRef.current = requestAnimationFrame(render)
+    }
 
     const render = (timestamp) => {
       if (!running) return
+      if (!shouldRun()) { rafRef.current = null; return }
       rafRef.current = requestAnimationFrame(render)
+      if (timestamp - lastFrameAt < MIN_FRAME_MS) return
+      lastFrameAt = timestamp
+      drawFrame(timestamp)
+    }
 
+    /* --- cached cell grid -------------------------------------------------
+       The sampled grid is a pure function of (image, w, h, cell) and the colour
+       params — none of which change between frames. It used to be recomputed
+       every frame, averaging 81 source pixels per cell. Now the browser does
+       the box-filter for us by drawing the image straight to a cols x rows
+       canvas, and the result is cached until something it depends on changes. */
+    let grid = null
+    let gridKey = ''
+
+    const ensureGrid = (w, h, cell, p) => {
+      const cols = Math.ceil(w / cell)
+      const rows = Math.ceil(h / cell)
+      const key = `${cols}x${rows}|${p.brightness},${p.contrast},${p.saturation},${p.grayscale}`
+      if (grid && gridKey === key) return grid
+
+      const off = new OffscreenCanvas(cols, rows)
+      const offCtx = off.getContext('2d', { willReadFrequently: true })
+      offCtx.imageSmoothingEnabled = true
+      offCtx.imageSmoothingQuality = 'high'
+      offCtx.drawImage(img, 0, 0, cols, rows)
+      const src = offCtx.getImageData(0, 0, cols, rows).data
+
+      const n = cols * rows
+      const rgb = new Uint8ClampedArray(n * 3)
+      const lum = new Float32Array(n)
+      for (let i = 0; i < n; i++) {
+        const s = i * 4
+        const [ar, ag, ab] = adjustColor(
+          src[s], src[s + 1], src[s + 2],
+          p.brightness, p.contrast, p.saturation, p.grayscale,
+        )
+        rgb[i * 3] = ar; rgb[i * 3 + 1] = ag; rgb[i * 3 + 2] = ab
+        lum[i] = luminance(ar, ag, ab) / 255
+      }
+      grid = { cols, rows, rgb, lum }
+      gridKey = key
+      return grid
+    }
+
+    /* --- dither rasteriser ------------------------------------------------
+       The dither is a 4x4 Bayer block per cell, so instead of issuing up to 16
+       fillRect calls per cell (~100k per frame at 1440x900) we write the
+       sub-cells straight into a cols*4 x rows*4 ImageData and blit it up with a
+       single nearest-neighbour drawImage. Same output, typed-array writes
+       instead of Canvas2D path setup. */
+    let ditherBuf = null, ditherCanvas = null, ditherCtx = null
+
+    const drawDitherFast = (p, g, w, h, animBase, intFactor) => {
+      const { cols, rows, rgb, lum } = g
+      const bw = cols * 4, bh = rows * 4
+      if (!ditherBuf || ditherBuf.width !== bw || ditherBuf.height !== bh) {
+        ditherCanvas = new OffscreenCanvas(bw, bh)
+        ditherCtx = ditherCanvas.getContext('2d')
+        ditherBuf = ditherCtx.createImageData(bw, bh)
+      }
+      const d = ditherBuf.data
+      d.fill(0)
+
+      const densScale = p.density / 20
+      const invert = p.invert
+      const animated = p.animated && intFactor > 0
+      const style = p.animStyle || 'pulse'
+      // 'pulse' is spatially uniform, so hoist it out of the per-cell loop.
+      const uniformMod = animated && style === 'pulse'
+        ? Math.sin(animBase * 2 * Math.PI) * intFactor
+        : 0
+      const coverage = p.coverage
+
+      for (let row = 0; row < rows; row++) {
+        for (let col = 0; col < cols; col++) {
+          if (coverage < 100 && Math.random() * 100 > coverage) continue
+          const ci = row * cols + col
+
+          let animMod = uniformMod
+          if (animated && style !== 'pulse') {
+            if (style === 'wave') {
+              animMod = Math.sin(animBase * 2 * Math.PI + (col + row) * 0.3) * intFactor
+            } else if (style === 'shimmer') {
+              animMod = Math.sin(animBase * 3 + col * 0.4) * intFactor
+            } else if (style === 'ripple') {
+              const dx = col - cols / 2, dy = row - rows / 2
+              animMod = Math.sin(animBase * 4 - Math.sqrt(dx * dx + dy * dy) * 0.5) * intFactor
+            } else if (style === 'flicker') {
+              animMod = (Math.random() - 0.5) * 2 * intFactor
+            }
+          }
+
+          const modLum = clamp(lum[ci] + animMod * 0.18)
+          const threshold = (invert ? 1 - modLum : modLum) * densScale
+          const bias = animMod * 0.12
+          const r = rgb[ci * 3], gg = rgb[ci * 3 + 1], b = rgb[ci * 3 + 2]
+          const bx = col * 4, by = row * 4
+
+          for (let dy = 0; dy < 4; dy++) {
+            const rowOff = (by + dy) * bw
+            for (let dx = 0; dx < 4; dx++) {
+              if (threshold > BAYER_FLAT[dy * 4 + dx] + bias) {
+                const o = (rowOff + bx + dx) * 4
+                d[o] = r; d[o + 1] = gg; d[o + 2] = b; d[o + 3] = 255
+              }
+            }
+          }
+        }
+      }
+
+      ditherCtx.putImageData(ditherBuf, 0, 0)
+      ctx.imageSmoothingEnabled = false
+      ctx.drawImage(ditherCanvas, 0, 0, w, h)
+      ctx.imageSmoothingEnabled = true
+    }
+
+    /* Tint, post-FX and point lights. Shared by the fast dither path and the
+       per-cell fallback, so both composite identically. */
+    const finishFrame = (p, w, h, t) => {
+      if (p.tintOpacity > 0) {
+        ctx.save()
+        ctx.globalAlpha = p.tintOpacity / 100
+        ctx.globalCompositeOperation = p.overlayBlend || 'multiply'
+        ctx.fillStyle = p.tint || '#3ca6ff'
+        ctx.fillRect(0, 0, w, h)
+        ctx.globalCompositeOperation = 'source-over'
+        ctx.globalAlpha = 1
+        ctx.restore()
+      }
+
+      const pfx = p.pfx || {}
+      if (pfx.scanLines?.enabled) applyScanLines(ctx, w, h, pfx.scanLines.intensity)
+      if (pfx.vignette?.enabled) applyVignette(ctx, w, h, pfx.vignette.intensity)
+      if (pfx.bloom?.enabled) applyBloom(ctx, w, h, pfx.bloom.intensity)
+      if (pfx.halftone?.enabled) applyHalftone(ctx, w, h, pfx.halftone.intensity)
+      if (pfx.pixelate?.enabled) applyPixelate(ctx, w, h, pfx.pixelate.intensity)
+      if (pfx.filmGrain?.enabled) applyFilmGrain(ctx, w, h, pfx.filmGrain.intensity, t)
+      if (pfx.glitch?.enabled) applyGlitch(ctx, w, h, pfx.glitch.intensity)
+
+      if (p.lights?.enabled && p.lights.points?.length) {
+        p.lights.points.forEach(({ x, y, radius = 0.25, intensity: li = 0.6 }) => {
+          const px = x * w, py = y * h
+          const r = radius * Math.min(w, h)
+          const grad = ctx.createRadialGradient(px, py, 0, px, py, r)
+          grad.addColorStop(0, `rgba(255,220,120,${li * 0.7})`)
+          grad.addColorStop(1, 'rgba(0,0,0,0)')
+          ctx.globalCompositeOperation = 'screen'
+          ctx.fillStyle = grad
+          ctx.fillRect(0, 0, w, h)
+          ctx.globalCompositeOperation = 'source-over'
+        })
+      }
+    }
+
+    const drawFrame = (timestamp) => {
       const p = paramsRef.current
       // CSS-pixel dimensions (what we draw in after the DPR scale transform)
       const w = canvas.clientWidth
@@ -412,19 +619,10 @@ export default function AsciiCanvas({ src, params: userParams = {}, className = 
       if (!img.complete || img.naturalWidth === 0) return
 
       const t = timestamp / 1000
-
-      // Re-sample source only when canvas size changes or first run
-      if (!lastSrcData || lastW !== w || lastH !== h) {
-        const off = new OffscreenCanvas(w, h)
-        const offCtx = off.getContext('2d')
-        offCtx.drawImage(img, 0, 0, w, h)
-        lastSrcData = offCtx.getImageData(0, 0, w, h)
-        lastW = w; lastH = h
-      }
-      const srcData = lastSrcData
+      if (lastW !== w || lastH !== h) { grid = null; lastW = w; lastH = h }
 
       ctx.save()
-      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0)
+      ctx.setTransform(dpr(), 0, 0, dpr(), 0, 0)
       ctx.clearRect(0, 0, w, h)
 
       // Background
@@ -439,21 +637,32 @@ export default function AsciiCanvas({ src, params: userParams = {}, className = 
 
       // Grid drawing
       const cell = Math.max(2, p.cellSize)
-      const cols = Math.ceil(w / cell)
-      const rows = Math.ceil(h / cell)
+      const g = ensureGrid(w, h, cell, p)
+      const { cols, rows } = g
 
       const speedFactor = p.animSpeed?.enabled ? (p.animSpeed.intensity / 100) : 0
       const intFactor = p.animIntensity?.enabled ? (p.animIntensity.intensity / 100) : 0
       const animBase = p.animated ? t * speedFactor * 1.4 : 0
+
+      const mode = p.renderMode
+      // Fast path: the mode this site actually uses. Everything else falls
+      // through to the original per-cell Canvas2D loop below, now reading the
+      // cached grid rather than re-sampling the source.
+      if (mode === 'dither' || !MODES.has(mode)) {
+        drawDitherFast(p, g, w, h, animBase, intFactor)
+        finishFrame(p, w, h, t)
+        ctx.restore()
+        return
+      }
 
       for (let row = 0; row < rows; row++) {
         for (let col = 0; col < cols; col++) {
           if (p.coverage < 100 && Math.random() * 100 > p.coverage) continue
 
           const cx = col * cell, cy = row * cell
-          const [sr, sg, sb] = sampleCell(srcData.data, w, cx, cy, cell, cell)
-          const [ar, ag, ab] = adjustColor(sr, sg, sb, p.brightness, p.contrast, p.saturation, p.grayscale)
-          const lum = luminance(ar, ag, ab) / 255
+          const ci = row * cols + col
+          const ar = g.rgb[ci * 3], ag = g.rgb[ci * 3 + 1], ab = g.rgb[ci * 3 + 2]
+          const lum = g.lum[ci]
 
           let animMod = 0
           if (p.animated && intFactor > 0) {
@@ -511,43 +720,7 @@ export default function AsciiCanvas({ src, params: userParams = {}, className = 
         }
       }
 
-      // Tint overlay
-      if (p.tintOpacity > 0) {
-        ctx.save()
-        ctx.globalAlpha = p.tintOpacity / 100
-        ctx.globalCompositeOperation = p.overlayBlend || 'multiply'
-        ctx.fillStyle = p.tint || '#3ca6ff'
-        ctx.fillRect(0, 0, w, h)
-        ctx.globalCompositeOperation = 'source-over'
-        ctx.globalAlpha = 1
-        ctx.restore()
-      }
-
-      // Post-FX
-      const pfx = p.pfx || {}
-      if (pfx.scanLines?.enabled) applyScanLines(ctx, w, h, pfx.scanLines.intensity)
-      if (pfx.vignette?.enabled) applyVignette(ctx, w, h, pfx.vignette.intensity)
-      if (pfx.bloom?.enabled) applyBloom(ctx, w, h, pfx.bloom.intensity)
-      if (pfx.halftone?.enabled) applyHalftone(ctx, w, h, pfx.halftone.intensity)
-      if (pfx.pixelate?.enabled) applyPixelate(ctx, w, h, pfx.pixelate.intensity)
-      if (pfx.filmGrain?.enabled) applyFilmGrain(ctx, w, h, pfx.filmGrain.intensity, t)
-      if (pfx.glitch?.enabled) applyGlitch(ctx, w, h, pfx.glitch.intensity)
-
-      // Point lights
-      if (p.lights?.enabled && p.lights.points?.length) {
-        p.lights.points.forEach(({ x, y, radius = 0.25, intensity: li = 0.6 }) => {
-          const px = x * w, py = y * h
-          const r = radius * Math.min(w, h)
-          const grad = ctx.createRadialGradient(px, py, 0, px, py, r)
-          grad.addColorStop(0, `rgba(255,220,120,${li * 0.7})`)
-          grad.addColorStop(1, 'rgba(0,0,0,0)')
-          ctx.globalCompositeOperation = 'screen'
-          ctx.fillStyle = grad
-          ctx.fillRect(0, 0, w, h)
-          ctx.globalCompositeOperation = 'source-over'
-        })
-      }
-
+      finishFrame(p, w, h, t)
       ctx.restore()
     }
 
@@ -557,12 +730,13 @@ export default function AsciiCanvas({ src, params: userParams = {}, className = 
       const w = canvas.clientWidth
       const h = canvas.clientHeight
       if (w < 1 || h < 1) return
-      const newW = (w * devicePixelRatio) | 0
-      const newH = (h * devicePixelRatio) | 0
+      const newW = (w * dpr()) | 0
+      const newH = (h * dpr()) | 0
       if (canvas.width !== newW || canvas.height !== newH) {
         canvas.width = newW
         canvas.height = newH
-        lastSrcData = null // force re-sample on next frame
+        grid = null // force the cell grid to rebuild at the new size
+        if (rafRef.current === null) start() // repaint a paused/static canvas
       }
     }
 
@@ -570,14 +744,33 @@ export default function AsciiCanvas({ src, params: userParams = {}, className = 
     ro.observe(canvas)
     syncSize() // run once immediately
 
-    const start = () => { rafRef.current = requestAnimationFrame(render) }
-    img.onload = start
-    if (img.complete && img.naturalWidth > 0) start()
+    // Only paint while the canvas is near the viewport.
+    const io = new IntersectionObserver(
+      ([e]) => {
+        onScreen = e.isIntersecting
+        if (onScreen) start(); else stop()
+      },
+      { rootMargin: '200px' }
+    )
+    io.observe(canvas)
+
+    const onVisibility = () => { if (document.hidden) stop(); else start() }
+    document.addEventListener('visibilitychange', onVisibility)
+
+    const onMotionChange = () => { stop(); start() }
+    motionQuery.addEventListener?.('change', onMotionChange)
+
+    const onLoad = () => { imgReady = true; start() }
+    img.onload = onLoad
+    if (img.complete && img.naturalWidth > 0) onLoad()
 
     return () => {
       running = false
       ro.disconnect()
-      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+      io.disconnect()
+      document.removeEventListener('visibilitychange', onVisibility)
+      motionQuery.removeEventListener?.('change', onMotionChange)
+      stop()
     }
   }, [src])
 

@@ -56,6 +56,11 @@
   --pill: 100vw;
   --dur: 0.7s;
   --ease: cubic-bezier(0.22, 0.68, 0.24, 1);
+
+  /* Hero slideshow timing. --hero-ken must stay under the HOLD constant in
+     Home.jsx (3000ms) so the drift completes before the next slide swaps in. */
+  --hero-fade: 420ms;
+  --hero-ken: 2900ms;
 }
 
 /* ---------- reset / base ---------- */
@@ -170,7 +175,11 @@ h1 em, h2 em { font-size: 1.06em; }
   gap: var(--s-5);
   padding: var(--s-4) var(--margin);
   color: var(--paper);
-  transition: background 0.5s var(--ease), padding 0.5s var(--ease), color 0.5s var(--ease);
+  /* background and color only — both are paint-level. `padding` was in here,
+     which meant .nav--solid animated layout for 500ms on a fixed-position flex
+     container, and it fired the moment the user started scrolling. The size
+     change now snaps; the colour change still eases. */
+  transition: background 0.5s var(--ease), color 0.5s var(--ease);
 }
 .nav--solid {
   background: var(--ink);
@@ -213,11 +222,11 @@ h1 em, h2 em { font-size: 1.06em; }
 .curtain { position: relative; overflow: hidden; background: var(--ink-2); }
 .curtain img {
   width: 100%; aspect-ratio: var(--ratio, 4/5); object-fit: cover;
-  transform: translateY(var(--py, 0)) scale(1.08);
+  transform: scale(1.08); /* parallax rides on the `translate` property */
   transition: transform 1.4s var(--ease);
   will-change: transform;
 }
-.curtain.in img { transform: translateY(var(--py, 0)) scale(1); }
+.curtain.in img { transform: scale(1); }
 .curtain__panel {
   position: absolute; inset: 0; background: var(--ink); transform-origin: right center;
   transition: transform 1s var(--ease);
@@ -248,10 +257,17 @@ h1 em, h2 em { font-size: 1.06em; }
   background: var(--ink);
   overflow: hidden;
 }
+/* The ASCII canvas clears to transparent, so this gradient is what gives the hero
+   its depth: a warm gold bloom behind the photograph, a cooler fall-off to the
+   left where the headline sits, and ink at the edges. Without it the dither
+   reads as scattered dots on flat black. */
 .hero__bg {
   position: absolute; inset: -6% 0;
-  background: var(--ink);
-  transform: translateY(var(--py, 0));
+  background:
+    radial-gradient(120% 90% at 72% 38%, rgba(201, 162, 39, 0.28) 0%, rgba(201, 162, 39, 0.10) 34%, transparent 66%),
+    radial-gradient(90% 70% at 18% 82%, rgba(64, 52, 82, 0.30) 0%, transparent 60%),
+    linear-gradient(160deg, #191713 0%, var(--ink) 46%, #0c0c0e 100%);
+  /* vertical offset comes from the `translate` property, set by useParallax */
   animation: bgin 2.4s var(--ease) both;
   overflow: hidden;
 }
@@ -261,8 +277,9 @@ h1 em, h2 em { font-size: 1.06em; }
 .hero__veil {
   position: absolute; inset: 0;
   background:
-    linear-gradient(90deg, rgba(10,10,10,.6) 0%, rgba(10,10,10,.26) 42%, transparent 72%),
-    linear-gradient(to top, rgba(10,10,10,.5), transparent 32%);
+    linear-gradient(90deg, rgba(10,10,10,.88) 0%, rgba(10,10,10,.72) 30%, rgba(10,10,10,.34) 52%, transparent 76%),
+    linear-gradient(to top, rgba(10,10,10,.72), transparent 38%),
+    linear-gradient(to bottom, rgba(10,10,10,.62), transparent 22%);
 }
 
 /* Copy holds 5 columns, the photograph takes the remaining 7 from column 6 —
@@ -293,7 +310,7 @@ h1 em, h2 em { font-size: 1.06em; }
   max-width: 38ch; min-height: 3lh;
   font-size: clamp(0.95rem, 0.9rem + 0.25vw, 1.0625rem);
   color: color-mix(in srgb, var(--paper) 70%, transparent);
-  animation: fadeup 0.9s var(--ease) 0.35s both;
+  animation: fadeup 0.6s var(--ease) 0.18s both;
 }
 @keyframes fadeup { from { opacity: 0; transform: translateY(14px) } }
 .hero__cta { display: flex; flex-wrap: wrap; gap: var(--s-3); margin-top: var(--s-4); }
@@ -305,12 +322,22 @@ h1 em, h2 em { font-size: 1.06em; }
   width: 100%; height: min(62svh, 36rem);
   overflow: hidden;
 }
+/* The drift is an animation, not a transition, and it is timed to finish inside
+   the hold. As a transition it ran 4s against a 3.6s hold, so it was cut off
+   mid-zoom and then played backwards on the outgoing frame — which is what made
+   the change read as a lurch. Now: the incoming frame settles from 1.06 to 1 and
+   is done before the next swap, so losing .is-active costs no visible jump. */
 .hero__media img {
   position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0; transform: scale(1.05);
-  transition: opacity 0.6s var(--ease), transform 4s linear;
+  opacity: 0;
+  transition: opacity var(--hero-fade) cubic-bezier(0.33, 0, 0.2, 1);
 }
-.hero__media img.is-active { opacity: 1; transform: scale(1); }
+.hero__media img.is-active {
+  opacity: 1;
+  will-change: opacity, transform;
+  animation: heroKen var(--hero-ken) cubic-bezier(0.16, 0.72, 0.24, 1) both;
+}
+@keyframes heroKen { from { transform: scale(1.06) } to { transform: scale(1) } }
 
 .hero__ticker {
   grid-column: 1 / -1; grid-row: 2; align-self: end;
@@ -349,7 +376,7 @@ h1 em, h2 em { font-size: 1.06em; }
 .banner__media { position: absolute; inset: 0; }
 .banner__media img {
   width: 100%; height: 100%; object-fit: cover; object-position: center right;
-  transform: translateY(var(--py, 0));
+  /* vertical offset comes from the `translate` property, set by useParallax */
   animation: heroin 1.8s var(--ease) both;
 }
 .banner__scrim {

@@ -205,16 +205,19 @@ const SlideUpText = forwardRef(function SlideUpText(
               )
             })}
 
+            {/* The space collapses to zero width without this: as a flex item the
+                span is blockified, so the lone " " becomes leading whitespace and
+                is dropped. white-space:pre keeps it at its natural width. */}
             {wordObj.needsSpace && (
-              <span style={{ position: 'relative', overflow: 'hidden', display: 'inline-block' }}>
+              <span style={{ position: 'relative', overflow: 'hidden', display: 'inline-block', whiteSpace: 'pre' }}>
                 <motion.span
                   custom={globalIdx++}
                   initial="hidden"
                   animate={isAnimating ? 'visible' : 'hidden'}
                   variants={variants}
-                  style={{ display: 'inline-block' }}
+                  style={{ display: 'inline-block', whiteSpace: 'pre' }}
                 >
-                  {' '}
+                  {' '}
                 </motion.span>
               </span>
             )}

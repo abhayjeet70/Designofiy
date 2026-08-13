@@ -9,25 +9,40 @@
 // PHOTOS: all photography in /public/work/ is the studio's own. Project titles,
 // localities and years below are placeholder labels - confirm them with the studio.
 
+// Editorial photography for the home hero and the two ASCII backdrops only.
+// These are licensed stock (Unsplash, free for commercial use — see ATTRIBUTION.md),
+// NOT studio work, so they are kept on their own keys: the project cards in
+// `projects` below carry localities and years and must stay the studio's own
+// photographs.
+export const heroStock = {
+  bg: '/hero/hero_bg.webp',
+  living: '/hero/stock-living.webp',
+  kitchen: '/hero/stock-kitchen.webp',
+  wardrobe: '/hero/stock-wardrobe.webp',
+  dining: '/hero/stock-dining.webp',
+  bathroom: '/hero/stock-bathroom.webp',
+  invite: '/hero/stock-invite.webp',
+}
+
 export const photos = {
   logo: '/logo.png',
-  heroBg: '/hero/hero_bg.png',
-  living: '/work/living-room.png',
-  livingWarm: '/work/living-warm.png',
-  livingWide: '/work/living-wide.png',
-  livingRug: '/work/living-rug.png',
-  diningArched: '/work/dining-arched.png',
-  diningOpen: '/work/dining-open-plan.png',
-  kitchen: '/work/modular-kitchen.png',
-  bedroomClassic: '/work/bedroom-classic.png',
-  bedroomTerracotta: '/work/bedroom-terracotta.png',
-  wardrobeCorridor: '/work/wardrobe-corridor.png',
-  wardrobeInterior: '/work/wardrobe-interior.png',
-  wardrobePulldown: '/work/wardrobe-pulldown.png',
-  wardrobeShelving: '/work/wardrobe-shelving.png',
-  bathroom: '/work/bathroom-grey.png',
-  partition: '/work/partition-unit.png',
-  salon: '/work/salon.png',
+  heroBg: heroStock.bg,
+  living: '/work/living-room.webp',
+  livingWarm: '/work/living-warm.webp',
+  livingWide: '/work/living-wide.webp',
+  livingRug: '/work/living-rug.webp',
+  diningArched: '/work/dining-arched.webp',
+  diningOpen: '/work/dining-open-plan.webp',
+  kitchen: '/work/modular-kitchen.webp',
+  bedroomClassic: '/work/bedroom-classic.webp',
+  bedroomTerracotta: '/work/bedroom-terracotta.webp',
+  wardrobeCorridor: '/work/wardrobe-corridor.webp',
+  wardrobeInterior: '/work/wardrobe-interior.webp',
+  wardrobePulldown: '/work/wardrobe-pulldown.webp',
+  wardrobeShelving: '/work/wardrobe-shelving.webp',
+  bathroom: '/work/bathroom-grey.webp',
+  partition: '/work/partition-unit.webp',
+  salon: '/work/salon.webp',
 }
 
 // The hero runs as a sequence: the backdrop holds, while the photograph and the
@@ -36,40 +51,40 @@ export const photos = {
 export const heroSequence = [
   {
     tag: 'Living',
-    src: photos.livingWarm,
-    alt: 'Sand leather living room with framed art and a warm pendant',
+    src: heroStock.living,
+    alt: 'Panelled living room in warm taupe with gold ring pendants and a marble floor',
     lines: ['Interiors with', 'a sense of', '<em>permanence</em>'],
     sub: 'Sand leather, hand-knotted wool and a single warm pendant. Rooms composed to hold their quality for a decade, not a season.',
     to: '/work',
   },
   {
     tag: 'Kitchens',
-    src: photos.kitchen,
-    alt: 'Handleless modular kitchen with fluted glass wall units',
+    src: heroStock.kitchen,
+    alt: 'Handleless modular kitchen in walnut and sand with a full-width marble backsplash',
     lines: ['Kitchens made', 'for the way', 'you <em>cook</em>'],
     sub: 'Fluted glass lit from within, quartz run full width, and drawer stacks where lesser kitchens put shutters.',
     to: '/services#modular',
   },
   {
     tag: 'Wardrobes',
-    src: photos.wardrobeCorridor,
-    alt: 'Teak and cane wardrobe run over a herringbone floor',
+    src: heroStock.wardrobe,
+    alt: 'Dressing room with a backlit mirror, fluted glass screen and a glazed wardrobe run',
     lines: ['Joinery that', 'earns its', '<em>keep</em>'],
     sub: 'Teak frames, cane-textured panels, and interiors planned to the centimetre before a single shutter was drawn.',
     to: '/services#wardrobes',
   },
   {
     tag: 'Dining',
-    src: photos.diningArched,
-    alt: 'Marble dining table beside an arched glass crockery unit',
+    src: heroStock.dining,
+    alt: 'Backlit glass crockery units in dark oak above a marble counter, with brass pendants',
     lines: ['The table', 'everything', '<em>gathers</em> around'],
     sub: 'Marble on a fluted timber base, arched crockery units lit from behind glass, and seating in two complementary weaves.',
     to: '/work',
   },
   {
     tag: 'Bathrooms',
-    src: photos.bathroom,
-    alt: 'Charcoal stone bathroom with a round backlit mirror',
+    src: heroStock.bathroom,
+    alt: 'Freestanding black stone bath against a warm timber wall under a concealed cove light',
     lines: ['Stone, light', 'and quiet', '<em>restraint</em>'],
     sub: 'Full-height charcoal stone, a honed black counter, concealed services and a mirror lit at exactly face height.',
     to: '/services#bathrooms',
@@ -80,23 +95,23 @@ export const heroSequence = [
 // with their subject on the right, so banner copy sits left against clear wall.
 export const pageHeroes = {
   work: {
-    src: '/hero/work.png',
+    src: '/hero/work.webp',
     alt: 'Photographs of finished interiors propped against a plaster wall with stone samples and a rolled drawing',
   },
   services: {
-    src: '/hero/services.png',
+    src: '/hero/services.webp',
     alt: 'Fan of material samples: travertine, fluted timber, brass, marble and folded fabric',
   },
   studio: {
-    src: '/hero/studio.png',
+    src: '/hero/studio.webp',
     alt: 'A studio desk with design books, pencils, an interior sketch and drawing sheets',
   },
   process: {
-    src: '/hero/process.png',
+    src: '/hero/process.webp',
     alt: 'Five stepped cards reading Discover, Design, Develop, Execute and Deliver',
   },
   contact: {
-    src: '/hero/contact.png',
+    src: '/hero/contact.webp',
     alt: 'A card reading "Let\'s create something beautiful together" beside a Designofiy business card, pen and envelope',
   },
 }
