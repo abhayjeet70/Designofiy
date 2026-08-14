@@ -457,21 +457,32 @@ h1 em, h2 em { font-size: 1.06em; }
 .filters button.is-active { background: var(--paper); color: var(--ink); border-color: var(--paper); }
 .section--paper .filters button.is-active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 
-.grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
+/* Card placement (gridColumn/gridRow) is computed in JS via packGrid() so that
+   wide/tall spans never strand an unfillable column or misalign a row — see
+   src/components/cardGrid.js. This grid only needs to define the tracks. */
+.grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: clamp(19rem, 24vw, 25rem);
+  column-gap: var(--gutter); row-gap: clamp(2.25rem, 3vw, 3.5rem);
+}
 .card {
-  position: relative; display: flex; flex-direction: column; overflow: hidden;
+  position: relative; display: grid; grid-template-rows: 1fr auto; overflow: hidden;
   padding: 0; border: 0; background: none; text-align: left; color: inherit;
   height: 100%;
 }
-.card > img { width: 100%; flex-grow: 1; min-height: 0; max-height: 55vh; aspect-ratio: 4/5; object-fit: cover; transition: transform 1.1s var(--ease); }
-.card--tall > img { aspect-ratio: 3/5.4; }
-.card--wide { grid-column: span 2; }
-.card--wide > img { aspect-ratio: 16/9; }
+.card > img { width: 100%; height: 100%; min-height: 0; object-fit: cover; transition: transform 1.1s var(--ease); }
 .card:hover > img, .card:focus-visible > img { transform: scale(1.03); }
-.card__body { padding: var(--s-4) 0 0; flex-shrink: 0; }
-.card__body h3 { margin: var(--s-2) 0 var(--s-1); }
-.card__body p { margin: 0; font-size: var(--fs-small); color: color-mix(in srgb, currentColor 55%, transparent); }
-.chip { font-size: var(--fs-small); font-weight: 500; color: var(--accent); }
+.card__body { padding: var(--s-3) 0 var(--s-2); }
+.card__body h3 {
+  margin: 0.25em 0 0.2em;
+  font-family: var(--serif); font-style: italic; font-weight: 400;
+  font-size: clamp(1.35rem, 1.2rem + 0.9vw, 1.85rem); letter-spacing: 0;
+}
+.card__body p { margin: 0; font-size: var(--fs-small); color: color-mix(in srgb, currentColor 50%, transparent); letter-spacing: 0.01em; }
+.chip {
+  font-size: 0.7rem; font-weight: 600; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.08em;
+}
 .section--paper .chip { color: var(--accent-ink); }
 .card__count {
   position: absolute; top: var(--s-3); right: var(--s-3);
@@ -719,14 +730,16 @@ h1 em, h2 em { font-size: 1.06em; }
 .footer__credit a:hover { color: var(--accent); border-bottom-color: var(--accent); }
 
 /* ---------- whatsapp ---------- */
+/* Official WhatsApp brand green, not the site's paper/ink pair — the FAB reads
+   faster as "this opens WhatsApp" when it matches the app icon. */
 .fab {
   position: fixed; right: var(--s-5); bottom: var(--s-6); z-index: 50;
   width: 52px; height: 52px; border-radius: var(--pill);
   display: grid; place-items: center;
-  background: var(--paper); color: var(--ink);
+  background: #25D366; color: #fff;
   transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
 }
-.fab:hover { background: var(--accent); color: var(--ink); }
+.fab:hover { background: #1EBE5A; color: #fff; }
 .fab__pulse { display: none; }
 
 /* =========================================================================
@@ -779,9 +792,8 @@ h1 em, h2 em { font-size: 1.06em; }
   .nav__links > a.is-current::after { bottom: 0; }
   .nav__links .btn { margin-top: var(--s-4); }
   .grid, .detail__grid, .mosaic { grid-template-columns: 1fr; }
-  .card--wide { grid-column: span 1; }
   .detail__grid figure.is-lead { grid-row: span 1; }
-  .detail__grid figure.is-lead img, .card--tall > img { aspect-ratio: 3/4; }
+  .detail__grid figure.is-lead img { aspect-ratio: 3/4; }
   .spotlight__thumbs { grid-template-columns: repeat(3, 1fr); }
   .statband, .timings, .records { grid-template-columns: 1fr; text-align: center; }
   .statband > div, .timings > div, .records > div { border-left: 0 !important; padding-inline: var(--margin) !important; }

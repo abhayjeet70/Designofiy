@@ -373,6 +373,7 @@ export const projects = [
     note: 'A double-height stairwell under a cascading crystal chandelier, a blue-panelled bar counter set into the walnut wall below, and a carpeted timber stair with a wrought-iron balustrade.',
     images: [dfy(84), dfy(86), dfy(87), dfy(80), dfy(83), dfy(88), dfy(82), dfy(92), dfy(81)],
     span: 'wide',
+    featured: true,
   },
   {
     slug: 'round-table-dining',

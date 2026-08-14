@@ -5,6 +5,7 @@ import { useReveal } from '../components/common'
 import { PageBanner } from '../components/motion'
 import DiagonalMarquee from '../components/DiagonalMarquee'
 import SlideUpText from '../components/SlideUpText'
+import { useGridCols, packGrid } from '../components/cardGrid'
 
 export default function Work() {
   const categories = useMemo(
@@ -16,6 +17,8 @@ export default function Work() {
   const [frame, setFrame] = useState(0)    // index within that project's images
 
   const shown = active === 'All' ? projects : projects.filter((p) => p.category === active)
+  const cols = useGridCols()
+  const packed = useMemo(() => packGrid(shown, cols), [shown, cols])
 
   // The grid is keyed on `active`, so changing the filter mounts a fresh set of
   // [data-reveal] cards that Layout's observer never sees. Re-scan for them.
@@ -69,10 +72,11 @@ export default function Work() {
         </div>
 
         <div className="grid" data-stagger key={active}>
-          {shown.map((p) => (
+          {packed.map((p) => (
             <button
               key={p.slug}
-              className={`card card--${p.span || 'std'}`}
+              className="card"
+              style={{ gridColumn: `${p.gridCol} / span ${p.w}`, gridRow: `${p.gridRow} / span ${p.h}` }}
               data-reveal
               onClick={() => show(p)}
               aria-label={`View ${p.title}`}

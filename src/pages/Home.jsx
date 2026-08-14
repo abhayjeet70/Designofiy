@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import {
   business, heroSequence, marqueeImages, photos, projects, ribbon, services, stats, testimonials,
@@ -7,6 +7,7 @@ import { Curtain, useParallax } from '../components/motion'
 import AsciiCanvas, { BACKDROP_ANIM } from '../components/AsciiCanvas'
 import DiagonalMarquee from '../components/DiagonalMarquee'
 import SlideUpText from '../components/SlideUpText'
+import { useGridCols, packGrid } from '../components/cardGrid'
 
 const ASCII_PARAMS = {
   renderMode: 'dither',
@@ -183,8 +184,9 @@ function Spotlight() {
 }
 
 function FeaturedWork() {
-  const featured = projects.filter((p) => p.featured)
-  let currentColumn = 0;
+  const featured = useMemo(() => projects.filter((p) => p.featured), [])
+  const cols = useGridCols()
+  const packed = useMemo(() => packGrid(featured, cols), [featured, cols])
   return (
     <section className="section">
       <div className="section__head section__head--row" data-reveal>
@@ -200,14 +202,16 @@ function FeaturedWork() {
         <Link className="link" to="/work">All projects</Link>
       </div>
       <div className="grid" data-stagger>
-        {featured.map((p) => {
-          let span = p.span === 'wide' ? 2 : 1;
-          let direction = 'bottom';
-          if (currentColumn === 0) direction = 'left';
-          else if (currentColumn === 2 || (currentColumn === 1 && span === 2)) direction = 'right';
-          currentColumn = (currentColumn + span) % 3;
+        {packed.map((p) => {
+          const direction = p.gridCol === 1 ? 'left' : p.gridCol + p.w - 1 >= cols ? 'right' : 'bottom'
           return (
-            <Link key={p.slug} to="/work" className={`card card--${p.span || 'std'}`} data-reveal={direction}>
+            <Link
+              key={p.slug}
+              to="/work"
+              className="card"
+              style={{ gridColumn: `${p.gridCol} / span ${p.w}`, gridRow: `${p.gridRow} / span ${p.h}` }}
+              data-reveal={direction}
+            >
               <img src={p.images[0]} alt={p.title} loading="lazy" />
               <div className="card__body">
                 <span className="chip">{p.category}</span>
